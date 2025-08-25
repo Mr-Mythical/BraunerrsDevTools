@@ -1,0 +1,5 @@
+<Bindings>
+    <Binding name="BDT_TOGGLE_DEV_MODE" category="BraunerrsDevTools">
+        BDTToggleDevMode()
+    </Binding>
+</Bindings>

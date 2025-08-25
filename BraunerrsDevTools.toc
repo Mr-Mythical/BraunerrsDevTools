@@ -1,0 +1,12 @@
+## Interface: 110200
+## Title: BraunerrsDevTools
+## Notes: Development tools for addon and weakaura creators
+## Author: braunerr
+## Version: 1.0.0
+## SavedVariables: BraunerrDevToolsDB
+## IconTexture: Interface\AddOns\BraunerrsDevTools\LogoTransparent
+
+Core.lua
+Utils\DevMode.lua
+Utils\KeybindManager.lua
+Options.lua
