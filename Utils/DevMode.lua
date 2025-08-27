@@ -52,7 +52,7 @@ end
 
 function DevMode:CreateStatusIndicator()
     local frame = CreateFrame("Frame", "BDTStatusFrame", UIParent)
-    frame:SetSize(200, 30)
+    frame:SetSize(350, 30)
     frame:SetPoint("TOP", UIParent, "TOP", 0, -10)
     frame:SetFrameStrata("HIGH")
     frame:SetFrameLevel(100)
@@ -69,10 +69,10 @@ function DevMode:CreateStatusIndicator()
     })
     border:SetBackdropBorderColor(1, 0.5, 0, 1)
     
-    local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    text:SetPoint("CENTER", frame, "CENTER", 0, 0)
-    text:SetText("DEV MODE ACTIVE")
-    text:SetTextColor(1, 0.5, 0, 1)
+        frame.statusText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        frame.statusText:SetPoint("CENTER", frame, "CENTER", 0, 0)
+        frame.statusText:SetTextColor(1, 0.5, 0, 1)
+        frame.statusText:SetText("DEV MODE ACTIVE")
     
     local icon = frame:CreateTexture(nil, "OVERLAY")
     icon:SetSize(20, 20)
@@ -98,6 +98,11 @@ function DevMode:UpdateIndicator()
             self.statusFrame.pulse:SetLooping("BOUNCE")
         end
         self.statusFrame.pulse:Play()
+            -- Display interface version
+            local _, _, _, interfaceVersion = GetBuildInfo()
+            if self.statusFrame.statusText then
+                self.statusFrame.statusText:SetText("DEV MODE ACTIVE | Interface: " .. tostring(interfaceVersion))
+            end
     else
         self.statusFrame:Hide()
         if self.statusFrame.pulse then
