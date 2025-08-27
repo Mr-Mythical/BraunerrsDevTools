@@ -43,6 +43,10 @@ function BDTToggleDevMode()
     end
 end
 
+function BDTReloadUI()
+    ReloadUI()
+end
+
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_LOGIN" then

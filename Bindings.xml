@@ -1,5 +1,8 @@
 <Bindings>
-    <Binding name="BDT_TOGGLE_DEV_MODE" category="BraunerrsDevTools">
+    <Binding name="Toggle Dev Mode" category="Braunerr's Dev Tools">
         BDTToggleDevMode()
+    </Binding>
+    <Binding name="Reload UI (Outside of Dev Mode)" category="BraunerrsDevTools">
+        BDTReloadUI()
     </Binding>
 </Bindings>
