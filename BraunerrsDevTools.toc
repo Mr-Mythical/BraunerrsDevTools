@@ -6,9 +6,10 @@
 ## IconTexture: Interface\AddOns\BraunerrsDevTools\LogoTransparent.tga
 ## X-Curse-Project-ID: 1334275
 ## X-Wago-ID: rNkP786a
-## SavedVariables: BraunerrDevToolsDB
+## SavedVariables: BraunerrsDevToolsDB
 
 Core.lua
 Utils\DevMode.lua
 Utils\KeybindManager.lua
+Utils\DebugAddonManager.lua
 Options.lua

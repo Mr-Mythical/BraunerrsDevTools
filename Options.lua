@@ -3,9 +3,9 @@ local BDTOptions = {}
 BDT.Options = BDTOptions
 
 local function createSetting(category, name, key, defaultValue, tooltip)
-    local option = Settings.RegisterAddOnSetting(category, name, key, BraunerrDevToolsDB, "boolean", name, defaultValue)
+    local option = Settings.RegisterAddOnSetting(category, name, key, BraunerrsDevToolsDB, "boolean", name, defaultValue)
     option:SetValueChangedCallback(function(_, value)
-        BraunerrDevToolsDB[key] = value
+        BraunerrsDevToolsDB[key] = value
         if key:find("reloadUI") then
             BDTOptions.updateReloadUIOptions()
         else
@@ -18,7 +18,7 @@ local function createSetting(category, name, key, defaultValue, tooltip)
 end
 
 function BDTOptions.updateDevMode()
-    BDT.DevMode.isEnabled = BraunerrDevToolsDB.devMode
+    BDT.DevMode.isEnabled = BraunerrsDevToolsDB.devMode
     BDT.DevMode:HandleAFKStatus()
     BDT.DevMode:UpdateAddonIntegrations()
     BDT.DevMode:UpdateIndicator()
@@ -86,6 +86,13 @@ function BDTOptions:Initialize()
             "enableAutoAFK",
             true,
             "Automatically set AFK status when entering development mode."
+        )
+        createSetting(
+            category,
+            "Addon Debug Integration",
+            "enableAddonDebugIntegration",
+            true,
+            "Automatically enable debug modes in registered addons (Using /bdt register) when development mode is active."
         )
         createSetting(
             category,

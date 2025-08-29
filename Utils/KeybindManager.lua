@@ -11,7 +11,7 @@ local frame = nil
 
 function KeybindManager:Initialize()
     _G["BINDING_NAME_BDT_TOGGLE_DEV_MODE"] = "Toggle Dev Mode"
-    _G["BINDING_HEADER_BRAUNERRDEVTOOLS"] = "Braunerr's Dev Tools"
+    _G["BINDING_HEADER_BRAUNERRSDEVTOOLS"] = "Braunerr's Dev Tools"
     
     self:CreateEventFrame()
     self:UpdateBindingsState()

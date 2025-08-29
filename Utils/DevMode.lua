@@ -7,6 +7,11 @@ function DevMode:Initialize()
     self:CreateStatusIndicator()
     self:UpdateIndicator()
     self:RegisterCombatEvents()
+    
+    -- Restore dev mode state on addon load
+    if self.isEnabled then
+        self:UpdateAddonIntegrations()
+    end
 end
 
 function DevMode:RegisterCombatEvents()
@@ -131,6 +136,7 @@ end
 
 function DevMode:UpdateAddonIntegrations()
     self:HandleBugSackIntegration()
+    self:HandleAddonDebugIntegration()
 end
 
 function DevMode:HandleAFKStatus()
@@ -181,6 +187,18 @@ function DevMode:HandleBugSackIntegration()
         if BDT.db.bugSackOriginalAutoPopup ~= nil then
             bugSackDB.auto = BDT.db.bugSackOriginalAutoPopup
         end
+    end
+end
+
+function DevMode:HandleAddonDebugIntegration()
+    if not BDT.db.enableAddonDebugIntegration then
+        return
+    end
+    
+    if self.isEnabled then
+        BDTEnableDevModeVariables()
+    else
+        BDTDisableDevModeVariables()
     end
 end
 
