@@ -19,12 +19,15 @@ function DevMode:RegisterCombatEvents()
         self.combatFrame = CreateFrame("Frame")
         self.combatFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
         self.combatFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self.combatFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         
         self.combatFrame:SetScript("OnEvent", function(self, event)
             if event == "PLAYER_REGEN_DISABLED" then
                 DevMode:OnEnterCombat()
             elseif event == "PLAYER_REGEN_ENABLED" then
                 DevMode:OnLeaveCombat()
+            elseif event == "PLAYER_ENTERING_WORLD" then
+                DevMode:OnPlayerEnteringWorld()
             end
         end)
     end
@@ -52,6 +55,18 @@ end
 function DevMode:OnLeaveCombat()
     if self.wasEnabledBeforeCombat then
         self.wasEnabledBeforeCombat = false
+    end
+end
+
+function DevMode:OnPlayerEnteringWorld()
+    -- Auto-refresh variables UI when player enters world (login, reload, zoning)
+    -- Add a small delay to ensure all addons have finished initializing
+    if self.isEnabled and self.settingsFrame and self.settingsFrame:IsShown() then
+        C_Timer.After(0.5, function()
+            if DevMode.settingsFrame and DevMode.settingsFrame:IsShown() then
+                DevMode:UpdateVariablesUI()
+            end
+        end)
     end
 end
 
@@ -108,10 +123,16 @@ function DevMode:UpdateIndicator()
             if self.statusFrame.statusText then
                 self.statusFrame.statusText:SetText("DEV MODE ACTIVE | Interface: " .. tostring(interfaceVersion))
             end
+        -- Auto-show variables UI when dev mode is enabled
+        self:ShowVariablesUI()
     else
         self.statusFrame:Hide()
         if self.statusFrame.pulse then
             self.statusFrame.pulse:Stop()
+        end
+        -- Hide variables UI when dev mode is disabled
+        if self.settingsFrame then
+            self.settingsFrame:Hide()
         end
     end
 end
@@ -204,4 +225,164 @@ end
 
 function DevMode:IsEnabled()
     return self.isEnabled
+end
+
+function DevMode:CreateVariablesUI()
+    if self.settingsFrame then return end
+    
+    local frame = CreateFrame("Frame", "BDTSettingsFrame", UIParent, "BackdropTemplate")
+    frame:SetSize(400, 200)  -- Start with minimum height, will be resized dynamically
+    
+    -- Restore saved position or use default center position
+    if BDT.db and BDT.db.variablesUI and BDT.db.variablesUI.point then
+        local point, relativeTo, relativePoint, xOfs, yOfs = unpack(BDT.db.variablesUI.point)
+        -- Validate the saved position
+        if point and relativePoint and type(xOfs) == "number" and type(yOfs) == "number" then
+            frame:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
+        else
+            frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        end
+    else
+        frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    end
+    
+    frame:SetFrameStrata("DIALOG")
+    frame:SetFrameLevel(200)
+    frame:SetMovable(true)
+    frame:EnableMouse(true)
+    frame:RegisterForDrag("LeftButton")
+    frame:SetScript("OnDragStart", frame.StartMoving)
+    frame:SetScript("OnDragStop", function()
+        frame:StopMovingOrSizing()
+        DevMode:SaveVariablesUIPosition()
+    end)
+    
+    -- Background only (no border)
+    frame:SetBackdrop({
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        tile = true, tileSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    
+    -- Title
+    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    title:SetPoint("TOP", frame, "TOP", 0, -16)
+    title:SetText("Debug Variables")
+    title:SetTextColor(1, 0.5, 0, 1)
+    
+    -- Close button
+    local closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+    closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
+    closeButton:SetScript("OnClick", function()
+        frame:Hide()
+    end)
+    
+    -- Content area (no scroll frame)
+    self.variablesTexts = {}
+    
+    frame:Hide()
+    self.settingsFrame = frame
+end
+
+function DevMode:SaveVariablesUIPosition()
+    if not self.settingsFrame then return end
+    
+    -- Ensure saved variables table exists
+    if not BDT.db.variablesUI then
+        BDT.db.variablesUI = {}
+    end
+    
+    -- Save the current position
+    local point, relativeTo, relativePoint, xOfs, yOfs = self.settingsFrame:GetPoint()
+    BDT.db.variablesUI.point = {point, "UIParent", relativePoint, xOfs, yOfs}
+end
+
+function DevMode:ResetVariablesUIPosition()
+    if not self.settingsFrame then return end
+    
+    -- Reset to center position
+    self.settingsFrame:ClearAllPoints()
+    self.settingsFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    
+    -- Clear saved position
+    if BDT.db.variablesUI then
+        BDT.db.variablesUI.point = nil
+    end
+end
+
+function DevMode:UpdateVariablesUI()
+    if not self.settingsFrame then return end
+    
+    local frame = self.settingsFrame
+    local yOffset = -40  -- Start below the title
+    local totalHeight = 60  -- Base height for title and padding
+    
+    -- Clear existing variables texts
+    for _, text in ipairs(self.variablesTexts) do
+        text:Hide()
+    end
+    self.variablesTexts = {}
+    
+    -- Display registered variables
+    local hasVariables = false
+    
+    -- Dev mode toggle variables
+    if BDT.db.devModeToggleVariables and next(BDT.db.devModeToggleVariables) then
+        local devModeTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        devModeTitle:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, yOffset)
+        devModeTitle:SetText("Dev Mode Auto-Toggle:")
+        devModeTitle:SetTextColor(0.8, 0.8, 1, 1)
+        table.insert(self.variablesTexts, devModeTitle)
+        yOffset = yOffset - 20
+        totalHeight = totalHeight + 20
+        
+        for varName, info in pairs(BDT.db.devModeToggleVariables) do
+            local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            text:SetPoint("TOPLEFT", frame, "TOPLEFT", 26, yOffset)
+            local status = IsDebugVariableEnabled(varName) and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
+            local category = info.category and (" [" .. info.category .. "]") or ""
+            text:SetText(varName .. category .. ": " .. status)
+            text:SetTextColor(1, 1, 1, 1)
+            table.insert(self.variablesTexts, text)
+            yOffset = yOffset - 16
+            totalHeight = totalHeight + 16
+            hasVariables = true
+        end
+    end
+    
+    if not hasVariables then
+        local noVarsText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        noVarsText:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, yOffset)
+        noVarsText:SetText("No registered variables")
+        noVarsText:SetTextColor(0.5, 0.5, 0.5, 1)
+        table.insert(self.variablesTexts, noVarsText)
+        totalHeight = totalHeight + 16
+    end
+    
+    -- Add bottom padding
+    totalHeight = totalHeight + 20
+    
+    -- Set minimum and maximum heights
+    totalHeight = math.max(totalHeight, 120)  -- Minimum height
+    totalHeight = math.min(totalHeight, 600)  -- Maximum height
+    
+    -- Resize the window
+    frame:SetHeight(totalHeight)
+end
+
+function DevMode:ShowVariablesUI()
+    if not self.settingsFrame then
+        self:CreateVariablesUI()
+    end
+    
+    self:UpdateVariablesUI()
+    self.settingsFrame:Show()
+end
+
+function IsDebugVariableEnabled(varName)
+    if _G[varName] == nil then
+        return false
+    end
+
+    return _G[varName] == true
 end

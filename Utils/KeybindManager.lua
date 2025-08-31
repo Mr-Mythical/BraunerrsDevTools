@@ -101,7 +101,7 @@ function KeybindManager:UpdateBindingsState()
     if allowALT then devBindings["ALT-R"] = function() ReloadUI() end end
 
     -- Enable/disable the frame based on at least one keybind being enabled
-    if enabled and (allowR or allowCTRL or allowSHIFT or allowALT) then
+    if enabled then
         frame:EnableKeyboard(true)
     else
         frame:EnableKeyboard(false)

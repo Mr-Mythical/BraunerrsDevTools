@@ -264,6 +264,12 @@ local function RegisterForDevModeToggle(varName, description, category)
     }
 
     print("BDT: Registered '" .. varName .. "'")
+    
+    -- Update settings UI if it's open
+    if BDT.DevMode and BDT.DevMode.settingsFrame and BDT.DevMode.settingsFrame:IsShown() then
+        BDT.DevMode:UpdateSettingsUI()
+    end
+    
     return true
 end
 
@@ -271,6 +277,12 @@ local function UnregisterForDevModeToggle(varName)
     if BDT.db.devModeToggleVariables and BDT.db.devModeToggleVariables[varName] then
         BDT.db.devModeToggleVariables[varName] = nil
         print("BDT: Unregistered '" .. varName .. "'")
+        
+        -- Update settings UI if it's open
+        if BDT.DevMode and BDT.DevMode.settingsFrame and BDT.DevMode.settingsFrame:IsShown() then
+            BDT.DevMode:UpdateSettingsUI()
+        end
+        
         return true
     end
 
