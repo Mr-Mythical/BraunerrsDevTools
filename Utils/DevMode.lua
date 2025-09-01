@@ -1,7 +1,17 @@
+--[[
+DevMode.lua - Development mode management
+
+Purpose: Handles dev mode state, UI indicators, addon integrations, and combat safety
+Dependencies: BDT.db, BDT.KeybindManager
+Author: braunerr
+--]]
+
 local _, BDT = ...
 local DevMode = {}
 BDT.DevMode = DevMode
 
+--- Initializes the dev mode module
+--- Sets up the status indicator, registers combat events, and restores state
 function DevMode:Initialize()
     self.isEnabled = BDT.db.devMode
     self:CreateStatusIndicator()
@@ -14,6 +24,8 @@ function DevMode:Initialize()
     end
 end
 
+--- Registers combat-related events
+--- Ensures dev mode is disabled during combat for safety
 function DevMode:RegisterCombatEvents()
     if not self.combatFrame then
         self.combatFrame = CreateFrame("Frame")
@@ -33,6 +45,8 @@ function DevMode:RegisterCombatEvents()
     end
 end
 
+--- Handles entering combat
+--- Disables dev mode and shows notification
 function DevMode:OnEnterCombat()
     if self.isEnabled then
         self.wasEnabledBeforeCombat = true
@@ -52,12 +66,16 @@ function DevMode:OnEnterCombat()
     end
 end
 
+--- Handles leaving combat
+--- Restores previous dev mode state if it was enabled before combat
 function DevMode:OnLeaveCombat()
     if self.wasEnabledBeforeCombat then
         self.wasEnabledBeforeCombat = false
     end
 end
 
+--- Handles player entering world
+--- Refreshes the variables UI if it's open
 function DevMode:OnPlayerEnteringWorld()
     -- Auto-refresh variables UI when player enters world (login, reload, zoning)
     -- Add a small delay to ensure all addons have finished initializing
@@ -70,6 +88,8 @@ function DevMode:OnPlayerEnteringWorld()
     end
 end
 
+--- Creates the status indicator frame
+--- Shows dev mode status at the top of the screen
 function DevMode:CreateStatusIndicator()
     local frame = CreateFrame("Frame", "BDTStatusFrame", UIParent)
     frame:SetSize(350, 30)
@@ -103,6 +123,8 @@ function DevMode:CreateStatusIndicator()
     self.statusFrame = frame
 end
 
+--- Updates the status indicator visibility and animation
+--- Shows/hides and animates based on dev mode state
 function DevMode:UpdateIndicator()
     if not self.statusFrame then return end
     
@@ -137,6 +159,8 @@ function DevMode:UpdateIndicator()
     end
 end
 
+--- Toggles development mode on/off
+--- Updates all related systems and provides user feedback
 function DevMode:Toggle()
     if InCombatLockdown() and not self.isEnabled then
         print("BDT: Cannot enable dev mode while in combat")
@@ -155,11 +179,15 @@ function DevMode:Toggle()
     print("BDT: Development mode " .. state)
 end
 
+--- Updates all addon integrations
+--- Handles BugSack and debug variable integrations
 function DevMode:UpdateAddonIntegrations()
     self:HandleBugSackIntegration()
     self:HandleAddonDebugIntegration()
 end
 
+--- Handles AFK status based on dev mode
+--- Sets or clears AFK to avoid interruptions during development
 function DevMode:HandleAFKStatus()
     if not BDT.db.enableAutoAFK then
         return
@@ -176,6 +204,8 @@ function DevMode:HandleAFKStatus()
     end
 end
 
+--- Handles BugSack integration
+--- Automatically enables BugSack error popups when dev mode is active
 function DevMode:HandleBugSackIntegration()
     if not BDT.db.enableBugSackIntegration then
         return
@@ -211,6 +241,8 @@ function DevMode:HandleBugSackIntegration()
     end
 end
 
+--- Handles addon debug integration
+--- Enables/disables registered debug variables based on dev mode state
 function DevMode:HandleAddonDebugIntegration()
     if not BDT.db.enableAddonDebugIntegration then
         return
@@ -223,6 +255,8 @@ function DevMode:HandleAddonDebugIntegration()
     end
 end
 
+--- Checks if dev mode is currently enabled
+--- @return boolean Whether dev mode is active
 function DevMode:IsEnabled()
     return self.isEnabled
 end

@@ -1,3 +1,11 @@
+--[[
+KeybindManager.lua - Manages keybinds for development tools
+
+Purpose: Handles keybind registration, event processing, and state management for reload UI functionality
+Dependencies: BDT.DevMode, BDT.db
+Author: braunerr
+--]]
+
 local _, BDT = ...
 local KeybindManager = {}
 BDT.KeybindManager = KeybindManager
@@ -9,6 +17,8 @@ local devBindings = {
 local originalBindings = {}
 local frame = nil
 
+--- Initializes the keybind manager
+--- Sets up global binding names and creates the event frame
 function KeybindManager:Initialize()
     _G["BINDING_NAME_BDT_TOGGLE_DEV_MODE"] = "Toggle Dev Mode"
     _G["BINDING_HEADER_BRAUNERRSDEVTOOLS"] = "Braunerr's Dev Tools"
@@ -17,6 +27,8 @@ function KeybindManager:Initialize()
     self:UpdateBindingsState()
 end
 
+--- Creates the event frame for handling key presses
+--- Sets up keyboard event handling with proper propagation control
 function KeybindManager:CreateEventFrame()
     if frame then return end
     
@@ -28,6 +40,9 @@ function KeybindManager:CreateEventFrame()
     frame:SetPropagateKeyboardInput(true)
 end
 
+--- Handles key press events for reload functionality
+--- @param key string The key that was pressed
+--- @return boolean Whether the key was handled (affects propagation)
 function KeybindManager:HandleKeyPress(key)
     if not BDT.DevMode:IsEnabled() then
         return false
@@ -37,11 +52,10 @@ function KeybindManager:HandleKeyPress(key)
         return false
     end
     
-
     local reloadBehavior = BDT.db.reloadKeybindBehavior or "disable_while_typing"
     local isTyping = GetCurrentKeyBoardFocus() ~= nil
 
-    -- Determine which keybinds are allowed based on the dropdown
+    -- Determine which keybinds are allowed based on the reload behavior setting
     if reloadBehavior == "disable_while_typing" and isTyping then
         return false
     end
@@ -85,6 +99,8 @@ function KeybindManager:HandleKeyPress(key)
     return false
 end
 
+--- Updates the keybind state based on user settings
+--- Rebuilds the devBindings table and enables/disables the frame accordingly
 function KeybindManager:UpdateBindingsState()
     if not frame then return end
     local enabled = BDT.DevMode:IsEnabled()
@@ -108,6 +124,8 @@ function KeybindManager:UpdateBindingsState()
     end
 end
 
+--- Lists all current dev bindings to the chat
+--- Useful for debugging keybind configuration
 function KeybindManager:ListBindings()
     print("BDT: Current dev bindings:")
     for key, _ in pairs(devBindings) do

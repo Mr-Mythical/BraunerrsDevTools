@@ -1,7 +1,22 @@
+--[[
+Options.lua - Settings and configuration UI
+
+Purpose: Manages the addon's settings panel and user preferences
+Dependencies: BDT.DevMode, BDT.KeybindManager, BDT.db
+Author: braunerr
+--]]
+
 local _, BDT = ...
 local BDTOptions = {}
 BDT.Options = BDTOptions
 
+--- Creates a setting checkbox in the options panel
+--- @param category table The settings category
+--- @param name string Display name for the setting
+--- @param key string The database key
+--- @param defaultValue boolean Default value
+--- @param tooltip string Tooltip text
+--- @return table The created option components
 local function createSetting(category, name, key, defaultValue, tooltip)
     local option = Settings.RegisterAddOnSetting(category, name, key, BraunerrsDevToolsDB, "boolean", name, defaultValue)
     option:SetValueChangedCallback(function(_, value)
@@ -17,6 +32,8 @@ local function createSetting(category, name, key, defaultValue, tooltip)
     return { option = option, checkbox = initializer }
 end
 
+--- Updates dev mode related settings
+--- Refreshes all dev mode integrations and UI elements
 function BDTOptions.updateDevMode()
     BDT.DevMode.isEnabled = BraunerrsDevToolsDB.devMode
     BDT.DevMode:HandleAFKStatus()
@@ -26,10 +43,14 @@ function BDTOptions.updateDevMode()
     BDTOptions.updateReloadUIOptions()
 end
 
+--- Updates reload UI keybind options
+--- Refreshes keybind state when reload options change
 function BDTOptions.updateReloadUIOptions()
     BDT.KeybindManager:UpdateBindingsState()
 end
 
+--- Initializes the options panel
+--- Registers the settings category and all available options
 function BDTOptions:Initialize()
     if not Settings or not Settings.RegisterVerticalLayoutCategory then
         print("BDT: Options API not found. Use /bdt commands instead.")

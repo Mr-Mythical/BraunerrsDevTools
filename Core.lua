@@ -1,3 +1,11 @@
+--[[
+Core.lua - Main addon logic and initialization
+
+Purpose: Handles addon initialization, settings management, and slash commands for debug variable control
+Dependencies: BDT.DevMode, BDT.KeybindManager, BDT.Options
+Author: braunerr
+--]]
+
 local addonName, BDT = ...
 _G["BraunerrsDevTools"] = BDT
 
@@ -16,6 +24,8 @@ local defaults = {
 
 local eventFrame = CreateFrame("Frame")
 
+--- Initializes addon settings with default values
+--- Merges saved variables with defaults to ensure all keys exist
 local function InitializeSettings()
     BraunerrsDevToolsDB = BraunerrsDevToolsDB or {}
     for k, v in pairs(defaults) do
@@ -26,6 +36,8 @@ local function InitializeSettings()
     BDT.db = BraunerrsDevToolsDB
 end
 
+--- Initializes the addon after PLAYER_LOGIN event
+--- Sets up all modules and displays welcome message if first load
 local function Initialize()
     InitializeSettings()
     
@@ -39,12 +51,16 @@ local function Initialize()
     end
 end
 
+--- Toggles development mode
+--- Global function accessible via keybinds
 function BDTToggleDevMode()
     if BDT and BDT.DevMode then
         BDT.DevMode:Toggle()
     end
 end
 
+--- Reloads the UI
+--- Global function for keybind integration
 function BDTReloadUI()
     ReloadUI()
 end
@@ -57,6 +73,8 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 end)
 
 -- Debug command functions
+--- Lists all debug variables to the chat
+--- Shows registered, dev mode toggle, and available global boolean variables
 local function ListDebugVariables()
     print("BDT: Debug Variables:")
 
@@ -104,6 +122,8 @@ local function ListDebugVariables()
     end
 end
 
+--- Finds all global boolean variables
+--- @return table Table of variable names mapped to true
 local function FindAllDebugVariables()
     local debugVars = {}
 
@@ -117,6 +137,9 @@ local function FindAllDebugVariables()
     return debugVars
 end
 
+--- Checks if a debug variable is enabled
+--- @param varName string The variable name to check
+--- @return boolean Whether the variable exists and is true
 local function IsDebugVariableEnabled(varName)
     if _G[varName] == nil then
         return false
@@ -125,6 +148,9 @@ local function IsDebugVariableEnabled(varName)
     return _G[varName] == true
 end
 
+--- Enables a debug variable
+--- @param varName string The variable name to enable
+--- @return boolean Whether the operation was successful
 local function EnableDebugVariable(varName)
     if _G[varName] == nil then
         print("BDT: '" .. varName .. "' not found")
@@ -141,6 +167,9 @@ local function EnableDebugVariable(varName)
     return true
 end
 
+--- Disables a debug variable
+--- @param varName string The variable name to disable
+--- @return boolean Whether the operation was successful
 local function DisableDebugVariable(varName)
     if _G[varName] == nil then
         print("BDT: '" .. varName .. "' not found")
