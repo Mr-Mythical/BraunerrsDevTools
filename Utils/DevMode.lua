@@ -237,6 +237,7 @@ function DevMode:HandleBugSackIntegration()
     else
         if BDT.db.bugSackOriginalAutoPopup ~= nil then
             bugSackDB.auto = BDT.db.bugSackOriginalAutoPopup
+            BDT.db.bugSackOriginalAutoPopup = nil
         end
     end
 end
