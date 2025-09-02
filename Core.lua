@@ -17,6 +17,7 @@ local defaults = {
     enableReloadUIKeybind = true,
     enableAutoAFK = true,
     enableAddonDebugIntegration = true,
+    reloadUIOnDevModeToggle = false,
     hasLoaded = false,
     bugSackOriginalAutoPopup = nil,
     devModeToggleVariables = {},

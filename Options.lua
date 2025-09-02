@@ -117,6 +117,13 @@ function BDTOptions:Initialize()
         )
         createSetting(
             category,
+            "Reload UI on Dev Mode Toggle",
+            "reloadUIOnDevModeToggle",
+            false,
+            "Automatically reload the UI when development mode is toggled on or off."
+        )
+        createSetting(
+            category,
             "Disable reload keybinds while typing",
             "disableReloadWhileTyping",
             true,

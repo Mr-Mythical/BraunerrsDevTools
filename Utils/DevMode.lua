@@ -175,6 +175,14 @@ function DevMode:Toggle()
     BDT.KeybindManager:UpdateBindingsState()
     self:UpdateIndicator()
     
+    -- Handle UI reload option
+    if BDT.db.reloadUIOnDevModeToggle then
+        local state = self.isEnabled and "|cFF00FF00enabled|r" or "|cFFFF0000disabled|r"
+        print("BDT: Development mode " .. state .. " - Reloading UI...")
+        ReloadUI()
+        return
+    end
+    
     local state = self.isEnabled and "|cFF00FF00enabled|r" or "|cFFFF0000disabled|r"
     print("BDT: Development mode " .. state)
 end
