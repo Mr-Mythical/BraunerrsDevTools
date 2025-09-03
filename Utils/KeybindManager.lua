@@ -20,9 +20,6 @@ local frame = nil
 --- Initializes the keybind manager
 --- Sets up global binding names and creates the event frame
 function KeybindManager:Initialize()
-    _G["BINDING_NAME_BDT_TOGGLE_DEV_MODE"] = "Toggle Dev Mode"
-    _G["BINDING_HEADER_BRAUNERRSDEVTOOLS"] = "Braunerr's Dev Tools"
-    
     self:CreateEventFrame()
     self:UpdateBindingsState()
 end
