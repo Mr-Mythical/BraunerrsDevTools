@@ -58,7 +58,6 @@ function KeybindManager:HandleKeyPress(key)
     end
 
     if reloadBehavior == "disable_r_shift_r_while_typing" and isTyping then
-        -- Only block R and Shift+R (with no Ctrl/Alt) while typing; allow Ctrl+R and Alt+R always
         local isCtrl = IsControlKeyDown()
         local isAlt = IsAltKeyDown()
         local isShift = IsShiftKeyDown()
@@ -101,7 +100,6 @@ end
 function KeybindManager:UpdateBindingsState()
     if not frame then return end
     local enabled = BDT.DevMode:IsEnabled()
-    -- Check each reload UI option
     local allowR = BDT.db.reloadUIR
     local allowCTRL = BDT.db.reloadUICTRL
     local allowSHIFT = BDT.db.reloadUISHIFT
@@ -118,14 +116,5 @@ function KeybindManager:UpdateBindingsState()
         frame:EnableKeyboard(true)
     else
         frame:EnableKeyboard(false)
-    end
-end
-
---- Lists all current dev bindings to the chat
---- Useful for debugging keybind configuration
-function KeybindManager:ListBindings()
-    print("BDT: Current dev bindings:")
-    for key, _ in pairs(devBindings) do
-        print("  " .. key)
     end
 end
