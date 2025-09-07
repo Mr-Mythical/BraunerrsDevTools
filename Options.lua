@@ -133,6 +133,5 @@ function BDTOptions:Initialize()
     end)
     if not success then
         print("BDT: Options panel registration failed: " .. tostring(result))
-        print("BDT: Use /bdt commands instead.")
     end
 end
