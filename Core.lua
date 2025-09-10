@@ -2,7 +2,7 @@
 Core.lua - Main addon logic and initialization
 
 Purpose: Handles addon initialization, settings management, and slash commands for debug variable control
-Dependencies: BDT.DevMode, BDT.KeybindManager, BDT.Options
+Dependencies: BDT.Config, BDT.DevMode, BDT.KeybindManager, BDT.Options
 Author: braunerr
 --]]
 
@@ -11,17 +11,7 @@ _G["BraunerrsDevTools"] = BDT
 
 BDT = BDT or {}
 
-local defaults = {
-    devMode = false,
-    enableBugSackIntegration = true,
-    enableReloadUIKeybind = true,
-    enableAutoAFK = true,
-    enableAddonDebugIntegration = true,
-    reloadUIOnDevModeToggle = false,
-    hasLoaded = false,
-    bugSackOriginalAutoPopup = nil,
-    devModeToggleVariables = {},
-}
+local defaults = BDT.Config.defaults
 
 local eventFrame = CreateFrame("Frame")
 

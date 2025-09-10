@@ -10,6 +10,8 @@ local _, BDT = ...
 local DevMode = {}
 BDT.DevMode = DevMode
 
+local DevMode = BDT.DevMode
+
 --- Initializes the dev mode module
 --- Sets up the status indicator, registers combat events, and restores state
 function DevMode:Initialize()

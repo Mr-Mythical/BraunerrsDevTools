@@ -8,6 +8,7 @@
 ## X-Wago-ID: rNkP786a
 ## SavedVariables: BraunerrsDevToolsDB
 
+Data\Config.lua
 Core.lua
 Utils\DevMode.lua
 Utils\KeybindManager.lua

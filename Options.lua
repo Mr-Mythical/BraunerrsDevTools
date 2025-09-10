@@ -2,7 +2,7 @@
 Options.lua - Settings and configuration UI
 
 Purpose: Manages the addon's settings panel and user preferences
-Dependencies: BDT.DevMode, BDT.KeybindManager, BDT.db
+Dependencies: BDT.Config, BDT.DevMode, BDT.KeybindManager, BDT.db
 Author: braunerr
 --]]
 

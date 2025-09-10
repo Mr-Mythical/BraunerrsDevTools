@@ -2,7 +2,7 @@
 KeybindManager.lua - Manages keybinds for development tools
 
 Purpose: Handles keybind registration, event processing, and state management for reload UI functionality
-Dependencies: BDT.DevMode, BDT.db
+Dependencies: BDT.Config, BDT.DevMode, BDT.db
 Author: braunerr
 --]]
 
@@ -10,9 +10,7 @@ local _, BDT = ...
 local KeybindManager = {}
 BDT.KeybindManager = KeybindManager
 
-local devBindings = {
-    ["CTRL-R"] = function() ReloadUI() end,
-}
+local devBindings = BDT.Config.devBindings
 
 local originalBindings = {}
 local frame = nil
