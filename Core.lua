@@ -326,7 +326,7 @@ local function CheckVariableExistence(varName)
         local varType = type(_G[varName])
         local varValue = tostring(_G[varName])
 
-        print("  ✓ Found - Type: " .. varType .. ", Value: " .. varValue)
+        print("  Found - Type: " .. varType .. ", Value: " .. varValue)
 
         if varType == "boolean" then
             print("  Status: " .. (_G[varName] and "enabled" or "disabled") .. " (can be registered)")
@@ -334,7 +334,7 @@ local function CheckVariableExistence(varName)
             print("  Cannot be registered (not a boolean)")
         end
     else
-        print("  ✗ Not found in global scope")
+        print("  Not found in global scope")
 
         -- Check for similar variable names (limit to 5 results)
         local foundSimilar = {}
