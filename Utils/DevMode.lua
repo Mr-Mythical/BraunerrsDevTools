@@ -312,7 +312,7 @@ function DevMode:CreateVariablesUI()
     -- Title
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", frame, "TOP", 0, -16)
-    title:SetText("Debug Variables")
+    title:SetText("Active Debug Variables")
     title:SetTextColor(1, 0.5, 0, 1)
     
     -- Close button
@@ -320,6 +320,19 @@ function DevMode:CreateVariablesUI()
     closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
     closeButton:SetScript("OnClick", function()
         frame:Hide()
+    end)
+    
+    -- Open Debug UI button
+    local debugUIButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    debugUIButton:SetSize(100, 25)
+    debugUIButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -15)
+    debugUIButton:SetText("Debug UI")
+    debugUIButton:SetScript("OnClick", function()
+        if DevTools and DevTools.DebugUI then
+            DevTools.DebugUI:Show()
+        else
+            print("BDT: Debug UI not available")
+        end
     end)
     
     -- Content area (no scroll frame)
@@ -359,8 +372,8 @@ function DevMode:UpdateVariablesUI()
     if not self.settingsFrame then return end
     
     local frame = self.settingsFrame
-    local yOffset = -40  -- Start below the title
-    local totalHeight = 60  -- Base height for title and padding
+    local yOffset = -70  -- Start below the title and button
+    local totalHeight = 90  -- Base height for title, button and padding
     
     -- Clear existing variables texts
     for _, text in ipairs(self.variablesTexts) do

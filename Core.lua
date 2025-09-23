@@ -15,8 +15,7 @@ local defaults = BDT.Config.defaults
 
 local eventFrame = CreateFrame("Frame")
 
---- Initializes addon settings with default values
---- Merges saved variables with defaults to ensure all keys exist
+--- Initializes saved variables with default values
 local function InitializeSettings()
     BraunerrsDevToolsDB = BraunerrsDevToolsDB or {}
     for k, v in pairs(defaults) do
@@ -37,9 +36,13 @@ local function Initialize()
     BDT.Options:Initialize()
     
     if not BDT.db.hasLoaded then
-        print("BDT: Loaded! Use /bdt to toggle dev mode")
+        print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt debug to open the debug UI")
         BDT.db.hasLoaded = true
     end
+    
+        -- Reference Debug UI (already loaded by .toc)
+        DevTools = DevTools or {}
+        DevTools.DebugUI = BraunerrsDevTools_DebugUI
 end
 
 --- Toggles development mode
@@ -62,56 +65,6 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         Initialize()
     end
 end)
-
--- Debug command functions
---- Lists all debug variables to the chat
---- Shows registered, dev mode toggle, and available global boolean variables
-local function ListDebugVariables()
-    print("BDT: Debug Variables:")
-
-    -- Show registered variables first
-    local hasRegistered = false
-    if BDT.DebugAddonManager and next(BDT.DebugAddonManager.registeredDebugVariables) ~= nil then
-        print("  Registered:")
-        for varName, info in pairs(BDT.DebugAddonManager.registeredDebugVariables) do
-            local status = IsDebugVariableEnabled(varName) and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
-            local category = info.category and (" [" .. info.category .. "]") or ""
-            print("    " .. varName .. category .. " - " .. status .. " - " .. (info.description or "No description"))
-            hasRegistered = true
-        end
-    end
-
-    -- Show dev mode toggle variables
-    local hasDevModeToggle = false
-    if BDT.db.devModeToggleVariables and next(BDT.db.devModeToggleVariables) ~= nil then
-        if hasRegistered then print("") end
-        print("  Dev Mode Auto-Toggle:")
-        for varName, info in pairs(BDT.db.devModeToggleVariables) do
-            local status = IsDebugVariableEnabled(varName) and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
-            local category = info.category and (" [" .. info.category .. "]") or ""
-            print("    " .. varName .. category .. " - " .. status .. " - " .. (info.description or "No description"))
-            hasDevModeToggle = true
-        end
-    end
-
-    -- Show all global boolean variables that look like debug variables
-    local debugVars = FindAllDebugVariables()
-    if next(debugVars) ~= nil then
-        if hasRegistered or hasDevModeToggle then print("") end
-        print("  Available (any global boolean variable):")
-        for varName, _ in pairs(debugVars) do
-            if not (BDT.DebugAddonManager and BDT.DebugAddonManager.registeredDebugVariables[varName]) and not (BDT.db.devModeToggleVariables and BDT.db.devModeToggleVariables[varName]) then
-                local status = IsDebugVariableEnabled(varName) and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
-                print("    " .. varName .. " - " .. status)
-            end
-        end
-    end
-
-    if not hasRegistered and not hasDevModeToggle and next(debugVars) == nil then
-        print("  No debug variables found")
-        print("  Any global boolean variable can be controlled with /bdt enable/disable <variable>")
-    end
-end
 
 --- Finds all global boolean variables
 --- @return table Table of variable names mapped to true
@@ -357,48 +310,28 @@ local function CheckVariableExistence(varName)
     end
 end
 
-local function ClearRegisteredVariables()
-    local registeredCount = 0
-    local devModeCount = 0
-
-    -- Clear registered variables from DebugAddonManager
-    if BDT.DebugAddonManager and BDT.DebugAddonManager.registeredDebugVariables then
-        for varName, info in pairs(BDT.DebugAddonManager.registeredDebugVariables) do
-            registeredCount = registeredCount + 1
-        end
-        BDT.DebugAddonManager.registeredDebugVariables = {}
-    end
-
-    -- Clear dev mode toggle variables from saved variables
-    if BDT.db.devModeToggleVariables then
-        for varName, info in pairs(BDT.db.devModeToggleVariables) do
-            devModeCount = devModeCount + 1
-        end
-        BDT.db.devModeToggleVariables = {}
-    end
-
-    print("BDT: Cleared " .. (registeredCount + devModeCount) .. " variables")
-end
-
-local function ShowHelp()
-    print("BDT Debug Commands (use /bdt <command>):")
-    print("  /bdt list - Show all debug variables (registered and available)")
-    print("  /bdt enable - Enable all registered debug variables")
-    print("  /bdt disable - Disable all registered debug variables")
-    print("  /bdt clear - Clear all registered and dev mode toggle variables")
-    print("  /bdt check <variable> - Check if a variable exists and its properties")
-    print("  /bdt enable <variable> - Enable any global boolean variable")
-    print("  /bdt disable <variable> - Disable any global boolean variable")
-    print("  /bdt register <variable> - Register variable for dev mode auto-toggle")
-    print("  /bdt unregister <variable> - Unregister from dev mode auto-toggle")
-end
-
 function BDTEnableAllDebugModes()
-    EnableAllDebugModes()
+    if DevTools and DevTools.DebugUI then
+        -- Delegate to DebugUI implementation
+        for varName, info in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
+            _G[varName] = true
+        end
+        print("BDT: All registered debug variables enabled")
+    else
+        EnableAllDebugModes()
+    end
 end
 
 function BDTDisableAllDebugModes()
-    DisableAllDebugModes()
+    if DevTools and DevTools.DebugUI then
+        -- Delegate to DebugUI implementation
+        for varName, info in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
+            _G[varName] = false
+        end
+        print("BDT: All registered debug variables disabled")
+    else
+        DisableAllDebugModes()
+    end
 end
 
 -- Dev mode specific functions that only affect dev mode toggle variables
@@ -413,69 +346,32 @@ end
 SLASH_BRAUNERRSDEVTOOLS1 = "/bdt"
 SLASH_BRAUNERRSDEVTOOLS2 = "/braunerrsdev"
 SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
-    local originalMsg = msg  -- Preserve original case for variable names
-    msg = msg:lower()
-    
-    -- Helper function to extract variable name while preserving case
-    local function extractVarName(command)
-        -- Find command position (case-insensitive) and extract variable name from original
-        local startPos, endPos = originalMsg:lower():find("^%s*" .. command:lower() .. "%s+")
-        if startPos then
-            local varStart = endPos + 1
-            local varName = originalMsg:sub(varStart):gsub("^%s+", ""):gsub("%s+$", "")
-            return varName ~= "" and varName or nil
-        end
-        return nil
-    end
+    msg = msg:lower():gsub("^%s+", ""):gsub("%s+$", "")  -- Trim whitespace
     
     if msg == "devmode" or msg == "dev" or msg == "" then
         BDT.DevMode:Toggle()
-    elseif msg == "list" then
-        ListDebugVariables()
-    elseif msg == "enable" then
-        EnableAllDebugModes()
-    elseif msg == "disable" then
-        DisableAllDebugModes()
-    elseif msg:find("^register ") then
-        local varName = extractVarName("register")
-        if varName then
-            RegisterForDevModeToggle(varName, "Dev mode toggle: " .. varName)
+    elseif msg == "debug" or msg == "ui" then
+        if DevTools and DevTools.DebugUI then
+            DevTools.DebugUI:Show()
         else
-            print("BDT: Error - No variable name provided for register command")
+            print("BDT: Debug UI not available")
         end
-    elseif msg:find("^unregister ") then
-        local varName = extractVarName("unregister")
-        if varName then
-            UnregisterForDevModeToggle(varName)
-        else
-            print("BDT: Error - No variable name provided for unregister command")
-        end
-    elseif msg:find("^enable ") then
-        local varName = extractVarName("enable")
-        if varName then
-            EnableDebugVariable(varName)
-        else
-            print("BDT: Error - No variable name provided for enable command")
-        end
-    elseif msg:find("^disable ") then
-        local varName = extractVarName("disable")
-        if varName then
-            DisableDebugVariable(varName)
-        else
-            print("BDT: Error - No variable name provided for disable command")
-        end
-    elseif msg:find("^check ") then
-        local varName = extractVarName("check")
-        if varName then
-            CheckVariableExistence(varName)
-        else
-            print("BDT: Error - No variable name provided for check command")
-        end
-    elseif msg == "clear" then
-        ClearRegisteredVariables()
     elseif msg == "help" then
-        ShowHelp()
+        print("BDT Commands:")
+        print("  /bdt - Toggle dev mode")
+        print("  /bdt debug - Open debug UI directly")
+        print("  /bdt help - Show this help")
+        print("")
+        print("When dev mode is active:")
+        print("  A window shows registered variables")
+        print("  Click 'Debug UI' button to open full variable manager")
     else
-        ShowHelp()
+        -- For any other command, open the debug UI
+        print("BDT: Unknown command. Opening Debug UI...")
+        if DevTools and DevTools.DebugUI then
+            DevTools.DebugUI:Show()
+        else
+            print("BDT: Debug UI not available. Use /bdt help for commands.")
+        end
     end
 end

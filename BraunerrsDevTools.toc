@@ -13,3 +13,4 @@ Core.lua
 Utils\DevMode.lua
 Utils\KeybindManager.lua
 Options.lua
+DebugUI.lua
