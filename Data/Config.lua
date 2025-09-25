@@ -14,17 +14,13 @@ BDT.Config = {
         enableBugSackIntegration = true,
         enableReloadUIKeybind = true,
         enableAutoAFK = true,
-        enableAddonDebugIntegration = true,
-        reloadUIOnDevModeToggle = false,
         hasLoaded = false,
         bugSackOriginalAutoPopup = nil,
         devModeToggleVariables = {},
-        -- Reload UI keybinds
         reloadUIR = false,
         reloadUICTRL = true,
         reloadUISHIFT = false,
         reloadUIALT = false,
-        -- Other options
         enableAddonDebugIntegration = true,
         reloadUIOnDevModeToggle = false,
         disableReloadWhileTyping = true,
