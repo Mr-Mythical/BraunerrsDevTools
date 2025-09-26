@@ -15,15 +15,11 @@ local devBindings = BDT.Config.devBindings
 local originalBindings = {}
 local frame = nil
 
---- Initializes the keybind manager
---- Sets up global binding names and creates the event frame
 function KeybindManager:Initialize()
     self:CreateEventFrame()
     self:UpdateBindingsState()
 end
 
---- Creates the event frame for handling key presses
---- Sets up keyboard event handling with proper propagation control
 function KeybindManager:CreateEventFrame()
     if frame then return end
     
@@ -35,10 +31,16 @@ function KeybindManager:CreateEventFrame()
     frame:SetPropagateKeyboardInput(true)
 end
 
---- Handles key press events for reload functionality
---- @param key string The key that was pressed
---- @return boolean Whether the key was handled (affects propagation)
 function KeybindManager:HandleKeyPress(key)
+    if not BDT.DevMode:IsEnabled() then
+        return false
+    end
+    
+    if InCombatLockdown() then
+        return false
+    end
+    
+    local reloadBehavior = BDT.db.reloadKeybindBehavior or "disable_while_typing"
     if not BDT.DevMode:IsEnabled() then
         return false
     end
@@ -93,8 +95,6 @@ function KeybindManager:HandleKeyPress(key)
     return false
 end
 
---- Updates the keybind state based on user settings
---- Rebuilds the devBindings table and enables/disables the frame accordingly
 function KeybindManager:UpdateBindingsState()
     if not frame then return end
     local enabled = BDT.DevMode:IsEnabled()
@@ -109,7 +109,6 @@ function KeybindManager:UpdateBindingsState()
     if allowSHIFT then devBindings["SHIFT-R"] = function() ReloadUI() end end
     if allowALT then devBindings["ALT-R"] = function() ReloadUI() end end
 
-    -- Enable/disable the frame based on at least one keybind being enabled
     if enabled then
         frame:EnableKeyboard(true)
     else

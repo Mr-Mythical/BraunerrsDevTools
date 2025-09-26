@@ -12,22 +12,17 @@ BDT.DevMode = DevMode
 
 local DevMode = BDT.DevMode
 
---- Initializes the dev mode module
---- Sets up the status indicator, registers combat events, and restores state
 function DevMode:Initialize()
     self.isEnabled = BDT.db.devMode
     self:CreateStatusIndicator()
     self:UpdateIndicator()
     self:RegisterCombatEvents()
     
-    -- Restore dev mode state on addon load
     if self.isEnabled then
         self:UpdateAddonIntegrations()
     end
 end
 
---- Registers combat-related events
---- Ensures dev mode is disabled during combat for safety
 function DevMode:RegisterCombatEvents()
     if not self.combatFrame then
         self.combatFrame = CreateFrame("Frame")
@@ -47,8 +42,6 @@ function DevMode:RegisterCombatEvents()
     end
 end
 
---- Handles entering combat
---- Disables dev mode and shows notification
 function DevMode:OnEnterCombat()
     if self.isEnabled then
         self.wasEnabledBeforeCombat = true
@@ -68,19 +61,13 @@ function DevMode:OnEnterCombat()
     end
 end
 
---- Handles leaving combat
---- Restores previous dev mode state if it was enabled before combat
 function DevMode:OnLeaveCombat()
     if self.wasEnabledBeforeCombat then
         self.wasEnabledBeforeCombat = false
     end
 end
 
---- Handles player entering world
---- Refreshes the variables UI if it's open
 function DevMode:OnPlayerEnteringWorld()
-    -- Auto-refresh variables UI when player enters world (login, reload, zoning)
-    -- Add a small delay to ensure all addons have finished initializing
     if self.isEnabled and self.settingsFrame and self.settingsFrame:IsShown() then
         C_Timer.After(0.5, function()
             if DevMode.settingsFrame and DevMode.settingsFrame:IsShown() then
@@ -397,7 +384,7 @@ function DevMode:UpdateVariablesUI()
         for varName, info in pairs(BDT.db.devModeToggleVariables) do
             local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             text:SetPoint("TOPLEFT", frame, "TOPLEFT", 26, yOffset)
-            local status = IsDebugVariableEnabled(varName) and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
+            local status = BDT.Utils.IsDebugVariableEnabled(varName) and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
             local category = info.category and (" [" .. info.category .. "]") or ""
             text:SetText(varName .. category .. ": " .. status)
             text:SetTextColor(1, 1, 1, 1)
@@ -437,10 +424,4 @@ function DevMode:ShowVariablesUI()
     self.settingsFrame:Show()
 end
 
-function IsDebugVariableEnabled(varName)
-    if _G[varName] == nil then
-        return false
-    end
 
-    return _G[varName] == true
-end

@@ -12,5 +12,6 @@ Data\Config.lua
 Core.lua
 Utils\DevMode.lua
 Utils\KeybindManager.lua
+Utils\VariableManager.lua
 Options.lua
 DebugUI.lua
