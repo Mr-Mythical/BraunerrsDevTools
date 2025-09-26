@@ -47,6 +47,7 @@ function DevMode:OnEnterCombat()
         self.wasEnabledBeforeCombat = true
         
         if BDT.db.enableAutoAFK and UnitIsAFK("player") then
+            -- Todo: this is depcrecated
             SendChatMessage("", "AFK")
         end
         
@@ -263,12 +264,10 @@ function DevMode:CreateVariablesUI()
     if self.settingsFrame then return end
     
     local frame = CreateFrame("Frame", "BDTSettingsFrame", UIParent, "BackdropTemplate")
-    frame:SetSize(400, 200)  -- Start with minimum height, will be resized dynamically
+    frame:SetSize(400, 200)
     
-    -- Restore saved position or use default center position
     if BDT.db and BDT.db.variablesUI and BDT.db.variablesUI.point then
-        local point, relativeTo, relativePoint, xOfs, yOfs = unpack(BDT.db.variablesUI.point)
-        -- Validate the saved position
+        local point, relativePoint, xOfs, yOfs = unpack(BDT.db.variablesUI.point)
         if point and relativePoint and type(xOfs) == "number" and type(yOfs) == "number" then
             frame:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
         else
@@ -289,27 +288,23 @@ function DevMode:CreateVariablesUI()
         DevMode:SaveVariablesUIPosition()
     end)
     
-    -- Background only (no border)
     frame:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
         tile = true, tileSize = 32,
         insets = { left = 11, right = 12, top = 12, bottom = 11 }
     })
     
-    -- Title
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", frame, "TOP", 0, -16)
     title:SetText("Active Debug Variables")
     title:SetTextColor(1, 0.5, 0, 1)
     
-    -- Close button
     local closeButton = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
     closeButton:SetScript("OnClick", function()
         frame:Hide()
     end)
     
-    -- Open Debug UI button
     local debugUIButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     debugUIButton:SetSize(100, 25)
     debugUIButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -15)
@@ -322,7 +317,6 @@ function DevMode:CreateVariablesUI()
         end
     end)
     
-    -- Content area (no scroll frame)
     self.variablesTexts = {}
     
     frame:Hide()
@@ -338,7 +332,7 @@ function DevMode:SaveVariablesUIPosition()
     end
     
     -- Save the current position
-    local point, relativeTo, relativePoint, xOfs, yOfs = self.settingsFrame:GetPoint()
+    local point, relativePoint, xOfs, yOfs = self.settingsFrame:GetPoint()
     BDT.db.variablesUI.point = {point, "UIParent", relativePoint, xOfs, yOfs}
 end
 
@@ -362,13 +356,11 @@ function DevMode:UpdateVariablesUI()
     local yOffset = -70  -- Start below the title and button
     local totalHeight = 90  -- Base height for title, button and padding
     
-    -- Clear existing variables texts
     for _, text in ipairs(self.variablesTexts) do
         text:Hide()
     end
     self.variablesTexts = {}
     
-    -- Display registered variables
     local hasVariables = false
     
     -- Dev mode toggle variables
@@ -404,14 +396,10 @@ function DevMode:UpdateVariablesUI()
         totalHeight = totalHeight + 16
     end
     
-    -- Add bottom padding
     totalHeight = totalHeight + 20
+    totalHeight = math.max(totalHeight, 120)
+    totalHeight = math.min(totalHeight, 600)
     
-    -- Set minimum and maximum heights
-    totalHeight = math.max(totalHeight, 120)  -- Minimum height
-    totalHeight = math.min(totalHeight, 600)  -- Maximum height
-    
-    -- Resize the window
     frame:SetHeight(totalHeight)
 end
 
