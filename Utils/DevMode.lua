@@ -267,9 +267,17 @@ function DevMode:CreateVariablesUI()
     frame:SetSize(400, 200)
     
     if BDT.db and BDT.db.variablesUI and BDT.db.variablesUI.point then
-        local point, relativePoint, xOfs, yOfs = unpack(BDT.db.variablesUI.point)
-        if point and relativePoint and type(xOfs) == "number" and type(yOfs) == "number" then
-            frame:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
+        local saved = BDT.db.variablesUI.point
+        local point, parent, relativePoint, xOfs, yOfs
+        if #saved == 5 then
+            point, parent, relativePoint, xOfs, yOfs = unpack(saved)
+        elseif #saved == 4 then
+            point, relativePoint, xOfs, yOfs = unpack(saved)
+            parent = "UIParent"
+        end
+        if point and parent and relativePoint and type(xOfs) == "number" and type(yOfs) == "number" then
+            local parentFrame = _G[parent] or UIParent
+            frame:SetPoint(point, parentFrame, relativePoint, xOfs, yOfs)
         else
             frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
         end
@@ -332,21 +340,9 @@ function DevMode:SaveVariablesUIPosition()
     end
     
     -- Save the current position
-    local point, relativePoint, xOfs, yOfs = self.settingsFrame:GetPoint()
-    BDT.db.variablesUI.point = {point, "UIParent", relativePoint, xOfs, yOfs}
-end
-
-function DevMode:ResetVariablesUIPosition()
-    if not self.settingsFrame then return end
-    
-    -- Reset to center position
-    self.settingsFrame:ClearAllPoints()
-    self.settingsFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    
-    -- Clear saved position
-    if BDT.db.variablesUI then
-        BDT.db.variablesUI.point = nil
-    end
+    local point, relativeTo, relativePoint, xOfs, yOfs = self.settingsFrame:GetPoint()
+    local parentName = "UIParent"
+    BDT.db.variablesUI.point = {point, parentName, relativePoint, xOfs, yOfs}
 end
 
 function DevMode:UpdateVariablesUI()
@@ -411,5 +407,3 @@ function DevMode:ShowVariablesUI()
     self:UpdateVariablesUI()
     self.settingsFrame:Show()
 end
-
-
