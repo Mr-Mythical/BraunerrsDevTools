@@ -46,7 +46,7 @@ end
 
 BDT.Utils.ProcessVariables = function(varTable, actionFunc)
     local count = 0
-    for varName, info in pairs(varTable) do
+    for varName in pairs(varTable) do
         if actionFunc(varName) then
             count = count + 1
         end
@@ -199,7 +199,7 @@ end
 
 function BDTEnableAllDebugModes()
     if DevTools and DevTools.DebugUI then
-        for varName, info in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
+        for varName in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
             _G[varName] = true
         end
         print("BDT: All registered debug variables enabled")
@@ -210,7 +210,7 @@ end
 
 function BDTDisableAllDebugModes()
     if DevTools and DevTools.DebugUI then
-        for varName, info in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
+        for varName in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
             _G[varName] = false
         end
         print("BDT: All registered debug variables disabled")

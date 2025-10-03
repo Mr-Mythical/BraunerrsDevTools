@@ -57,7 +57,7 @@ end
 function DebugUI:UpdateList()
     local filter = searchBox:GetText():lower()
     local y = -5
-    for i, child in ipairs({content:GetChildren()}) do
+    for _, child in ipairs({content:GetChildren()}) do
         child:Hide()
     end
     local index = 1

@@ -12,7 +12,6 @@ BDT.KeybindManager = KeybindManager
 
 local devBindings = BDT.Config.devBindings
 
-local originalBindings = {}
 local frame = nil
 
 function KeybindManager:Initialize()
@@ -40,7 +39,6 @@ function KeybindManager:HandleKeyPress(key)
         return false
     end
     
-    local reloadBehavior = BDT.db.reloadKeybindBehavior or "disable_while_typing"
     if not BDT.DevMode:IsEnabled() then
         return false
     end
@@ -52,7 +50,6 @@ function KeybindManager:HandleKeyPress(key)
     local reloadBehavior = BDT.db.reloadKeybindBehavior or "disable_while_typing"
     local isTyping = GetCurrentKeyBoardFocus() ~= nil
 
-    -- Determine which keybinds are allowed based on the reload behavior setting
     if reloadBehavior == "disable_while_typing" and isTyping then
         return false
     end
@@ -82,7 +79,9 @@ function KeybindManager:HandleKeyPress(key)
     local action = devBindings[fullKey] or devBindings[key]
     
     if action then
-        frame:SetPropagateKeyboardInput(false)
+        if frame then
+            frame:SetPropagateKeyboardInput(false)
+        end
         action()
         C_Timer.After(0.01, function()
             if frame then

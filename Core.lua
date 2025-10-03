@@ -6,7 +6,7 @@ Dependencies: BDT.Config, BDT.DevMode, BDT.KeybindManager, BDT.Options
 Author: braunerr
 --]]
 
-local addonName, BDT = ...
+local BDT = ...
 _G["BraunerrsDevTools"] = BDT
 
 BDT = BDT or {}
@@ -45,8 +45,6 @@ local function Initialize()
         print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt debug to open the debug UI")
         BDT.db.hasLoaded = true
     end
-    
-        -- Reference Debug UI (already loaded by .toc)
         DevTools = DevTools or {}
         DevTools.DebugUI = BraunerrsDevTools_DebugUI
 end
@@ -71,7 +69,7 @@ end)
 SLASH_BRAUNERRSDEVTOOLS1 = "/bdt"
 SLASH_BRAUNERRSDEVTOOLS2 = "/braunerrsdev"
 SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
-    msg = msg:lower():gsub("^%s+", ""):gsub("%s+$", "")  -- Trim whitespace
+    msg = msg:lower():gsub("^%s+", ""):gsub("%s+$", "")
     
     if msg == "devmode" or msg == "dev" or msg == "" then
         BDT.DevMode:Toggle()
@@ -91,7 +89,6 @@ SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
         print("  A window shows registered variables")
         print("  Click 'Debug UI' button to open full variable manager")
     else
-        -- For any other command, open the debug UI
         print("BDT: Unknown command. Opening Debug UI...")
         if DevTools and DevTools.DebugUI then
             DevTools.DebugUI:Show()
