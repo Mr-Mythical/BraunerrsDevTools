@@ -82,7 +82,7 @@ end
 --- Shows dev mode status at the top of the screen
 function DevMode:CreateStatusIndicator()
     local frame = CreateFrame("Frame", "BDTStatusFrame", UIParent)
-    frame:SetSize(350, 30)
+    frame:SetSize(370, 30)
     frame:SetPoint("TOP", UIParent, "TOP", 0, -10)
     frame:SetFrameStrata("HIGH")
     frame:SetFrameLevel(100)
@@ -104,11 +104,16 @@ function DevMode:CreateStatusIndicator()
         frame.statusText:SetTextColor(1, 0.5, 0, 1)
         frame.statusText:SetText("DEV MODE ACTIVE")
     
-    local icon = frame:CreateTexture(nil, "OVERLAY")
-    icon:SetSize(20, 20)
-    icon:SetPoint("LEFT", frame, "LEFT", 10, 0)
-    icon:SetTexture("Interface\\AddOns\\BraunerrsDevTools\\LogoTransparent")
-    
+    local iconFront = frame:CreateTexture(nil, "OVERLAY")
+    iconFront:SetSize(20, 20)
+    iconFront:SetPoint("LEFT", frame, "LEFT", 10, 0)
+    iconFront:SetTexture("Interface\\AddOns\\BraunerrsDevTools\\LogoTransparent")
+
+    local iconBack = frame:CreateTexture(nil, "BACKGROUND")
+    iconBack:SetSize(20, 20)
+    iconBack:SetPoint("RIGHT", frame, "RIGHT", -10, 0)
+    iconBack:SetTexture("Interface\\AddOns\\BraunerrsDevTools\\LogoTransparent")
+
     frame:Hide()
     self.statusFrame = frame
 end
@@ -264,7 +269,7 @@ function DevMode:CreateVariablesUI()
     if self.settingsFrame then return end
     
     local frame = CreateFrame("Frame", "BDTSettingsFrame", UIParent, "BackdropTemplate")
-    frame:SetSize(400, 200)
+    frame:SetSize(420, 200)
     
     if BDT.db and BDT.db.variablesUI and BDT.db.variablesUI.point then
         local saved = BDT.db.variablesUI.point
