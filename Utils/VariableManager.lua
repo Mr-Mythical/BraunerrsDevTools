@@ -9,6 +9,7 @@ Author: braunerr
 local _, BDT = ...
 
 BDT.VariableManager = {}
+BDT.Utils = BDT.Utils or {}
 
 local VariableManager = BDT.VariableManager
 

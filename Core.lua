@@ -6,11 +6,11 @@ Dependencies: BDT.Config, BDT.DevMode, BDT.KeybindManager, BDT.Options
 Author: braunerr
 --]]
 
-local BDT = ...
+local addonName, BDT = ...
 _G["BraunerrsDevTools"] = BDT
 
 BDT = BDT or {}
-BDT.Utils = {}
+BDT.Utils = BDT.Utils or {}
 
 BDT.Utils.IsDebugVariableEnabled = function(varName)
     if _G[varName] == nil then
