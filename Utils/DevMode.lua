@@ -47,8 +47,7 @@ function DevMode:OnEnterCombat()
         self.wasEnabledBeforeCombat = true
         
         if BDT.db.enableAutoAFK and UnitIsAFK("player") then
-            -- Todo: this is depcrecated
-            SendChatMessage("", "AFK")
+            C_ChatInfo.SendChatMessage("", "AFK")
         end
         
         self.isEnabled = false
@@ -187,11 +186,11 @@ function DevMode:HandleAFKStatus()
     
     if self.isEnabled then
         if not UnitIsAFK("player") then
-            SendChatMessage("", "AFK")
+            C_ChatInfo.SendChatMessage("", "AFK")
         end
     else
         if UnitIsAFK("player") then
-            SendChatMessage("", "AFK")
+            C_ChatInfo.SendChatMessage("", "AFK")
         end
     end
 end
