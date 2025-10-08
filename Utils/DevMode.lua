@@ -321,12 +321,10 @@ end
 function DevMode:SaveVariablesUIPosition()
     if not self.settingsFrame then return end
     
-    -- Ensure saved variables table exists
     if not BDT.db.variablesUI then
         BDT.db.variablesUI = {}
     end
     
-    -- Save the current position
     local point, relativeTo, relativePoint, xOfs, yOfs = self.settingsFrame:GetPoint()
     local parentName = "UIParent"
     BDT.db.variablesUI.point = {point, parentName, relativePoint, xOfs, yOfs}
@@ -346,7 +344,6 @@ function DevMode:UpdateVariablesUI()
     
     local hasVariables = false
     
-    -- Dev mode toggle variables
     if BDT.db.devModeToggleVariables and next(BDT.db.devModeToggleVariables) then
         local devModeTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         devModeTitle:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, yOffset)
