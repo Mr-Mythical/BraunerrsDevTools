@@ -116,6 +116,13 @@ function BDTOptions:Initialize()
             true,
             "If enabled, all reload keybinds are ignored while typing in chat or edit boxes like in the WeakAuras addon."
         )
+        createSetting(
+            category,
+            "Hide Interface Version in Dev Mode",
+            "hideInterfaceVersionInDevMode",
+            false,
+            "If enabled, the interface version will not be displayed in the dev mode status indicator."
+        )
         BDTOptions.updateReloadUIOptions()
     end)
     if not success then

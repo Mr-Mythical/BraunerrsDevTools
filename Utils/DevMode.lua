@@ -134,7 +134,11 @@ function DevMode:UpdateIndicator()
         self.statusFrame.pulse:Play()
             local _, _, _, interfaceVersion = GetBuildInfo()
             if self.statusFrame.statusText then
-                self.statusFrame.statusText:SetText("DEV MODE ACTIVE | Interface: " .. tostring(interfaceVersion))
+                local text = "DEV MODE ACTIVE"
+                if not BDT.db.hideInterfaceVersionInDevMode then
+                    text = text .. " | Interface: " .. tostring(interfaceVersion)
+                end
+                self.statusFrame.statusText:SetText(text)
             end
         self:ShowVariablesUI()
     else

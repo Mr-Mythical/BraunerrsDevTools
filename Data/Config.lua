@@ -24,6 +24,7 @@ BDT.Config = {
         enableAddonDebugIntegration = true,
         reloadUIOnDevModeToggle = false,
         disableReloadWhileTyping = true,
+        hideInterfaceVersionInDevMode = false,
     },
     devBindings = {
         ["CTRL-R"] = function() ReloadUI() end,
