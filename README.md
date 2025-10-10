@@ -15,34 +15,38 @@ The core feature of this addon is Dev Mode:
 
 Toggle Dev Mode at any time with `/bdt` or by creating a keybind in the settings.
 
+### Configuration
+Configure Dev Mode options through the game's interface options panel (Esc > Interface > AddOns > Braunerr's Dev Tools). Available settings include:
+- Reload UI keybind combinations (Ctrl+R, Shift+R, Alt+R, etc.)
+- BugSack integration
+- Auto AFK when entering dev mode
+- Addon debug integration
+- Reload UI on dev mode toggle
+- Disable reload keybinds while typing
+
+### Debug Variables UI
+When Dev Mode is active, a movable UI window appears showing all registered debug variables and their current status. This window provides a visual overview of which debug features are enabled and allows quick access to the Debug UI tool.
+
 ## Debug Variable Control
 
-Easily control debug variables from any addon without code changes. This feature lets you toggle debug modes, verbose logging, and other boolean settings across all your addons.
+Easily control debug variables from any addon without code changes. This feature lets you toggle debug modes, verbose logging, and other boolean settings across all your addons through a user-friendly interface.
 
 ### What It Does
 - **Universal Control**: Toggle any global boolean variable from any loaded addon
 - **No Integration Required**: Works with existing addons automatically
 - **Dev Mode Integration**: Auto-enable debug variables when entering dev mode
 - **Persistent Settings**: Your debug configurations are saved and restored
+- **Visual Interface**: UI window shows active variables when dev mode is enabled
 
 ### How It Works
-Many addons use boolean variables for debug features (like `MyAddonDebug = true`). This system finds and controls these variables, giving you centralized debug management.
+Many addons use boolean variables for debug features (like `MyAddonDebug = true`). This system finds and controls these variables, giving you centralized debug management through the interface.
 
-### Commands
-- `/bdt list` - Show all available debug variables from loaded addons
-- `/bdt enable <variable>` - Turn on any debug variable (e.g., enable verbose logging)
-- `/bdt disable <variable>` - Turn off any debug variable
-- `/bdt register <variable>` - Add variable to dev mode auto-toggle list
-- `/bdt unregister <variable>` - Remove from dev mode auto-toggle
-- `/bdt enable/disable` - Control all registered variables at once
-
-### Quick Examples
-```bash
-/bdt enable MyAddonDebug        # Enable debug logging in MyAddon
-/bdt disable VerboseOutput      # Turn off verbose output
-/bdt register MyAddonDebug      # Auto-enable when dev mode starts
-/bdt list                       # See all debug variables available
-```
+### Interface Usage
+All debug variable management is handled through the UI window that appears when Dev Mode is active. From this window you can:
+- View all registered debug variables and their current status
+- Enable/disable individual variables
+- Register/unregister variables for dev mode auto-toggle
+- Access the Debug UI tool for advanced debugging
 
 ### For Addon Developers
 Make your addon's debug features controllable by simply using global boolean variables:
@@ -52,10 +56,8 @@ Make your addon's debug features controllable by simply using global boolean var
 MyAddonDebug = false           -- Main debug toggle
 MyAddonVerbose = false         -- Verbose logging
 MyAddonTrace = false           -- Function tracing
-
--- Developers can now control these with:
-/bdt enable MyAddonDebug
-/bdt enable MyAddonVerbose
 ```
 
-**Works with any global boolean variable from any loaded addon!** No code changes required in BraunerrsDevTools.
+Users can then control these variables through the BraunerrsDevTools interface when Dev Mode is active.
+
+**Works with any global boolean variable from any loaded addon!**
