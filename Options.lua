@@ -100,7 +100,7 @@ function BDTOptions:Initialize()
             "Addon Debug Integration",
             "enableAddonDebugIntegration",
             true,
-            "Automatically enable debug modes in registered addons (Using /bdt register) when development mode is active."
+            "Automatically enable debug modes in registered addons when development mode is active. Use the debug variables UI to register addons for auto-toggle."
         )
         createSetting(
             category,
