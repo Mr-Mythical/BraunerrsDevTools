@@ -21,7 +21,6 @@ BDT.Config = {
         reloadUICTRL = true,
         reloadUISHIFT = false,
         reloadUIALT = false,
-        enableAddonDebugIntegration = true,
         reloadUIOnDevModeToggle = false,
         disableReloadWhileTyping = true,
         hideInterfaceVersionInDevMode = false,

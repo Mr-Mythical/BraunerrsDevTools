@@ -97,13 +97,6 @@ function BDTOptions:Initialize()
         )
         createSetting(
             category,
-            "Addon Debug Integration",
-            "enableAddonDebugIntegration",
-            true,
-            "Automatically enable debug modes in registered addons when development mode is active. Use the debug variables UI to register addons for auto-toggle."
-        )
-        createSetting(
-            category,
             "Reload UI on Dev Mode Toggle",
             "reloadUIOnDevModeToggle",
             false,

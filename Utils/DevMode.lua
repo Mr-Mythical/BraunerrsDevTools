@@ -236,10 +236,6 @@ function DevMode:HandleBugSackIntegration()
 end
 
 function DevMode:HandleAddonDebugIntegration()
-    if not BDT.db.enableAddonDebugIntegration then
-        return
-    end
-    
     if self.isEnabled then
         BDTEnableDevModeVariables()
     else
