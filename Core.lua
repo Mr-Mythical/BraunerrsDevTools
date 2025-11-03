@@ -20,7 +20,7 @@ BDT.Utils.IsDebugVariableEnabled = function(varName)
     return _G[varName] == true
 end
 
-local defaults = BDT.Config.defaults
+local defaults = BDT.Options.defaults
 
 local eventFrame = CreateFrame("Frame")
 

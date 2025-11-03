@@ -10,6 +10,23 @@ local _, BDT = ...
 local BDTOptions = {}
 BDT.Options = BDTOptions
 
+BDTOptions.defaults = {
+    devMode = false,
+    enableBugSackIntegration = true,
+    enableReloadUIKeybind = true,
+    enableAutoAFK = true,
+    hasLoaded = false,
+    bugSackOriginalAutoPopup = nil,
+    devModeToggleVariables = {},
+    reloadUIR = false,
+    reloadUICTRL = true,
+    reloadUISHIFT = false,
+    reloadUIALT = false,
+    reloadUIOnDevModeToggle = false,
+    disableReloadWhileTyping = true,
+    hideInterfaceVersionInDevMode = false,
+}
+
 local function createSetting(category, name, key, defaultValue, tooltip)
     local option = Settings.RegisterAddOnSetting(category, name, key, BraunerrsDevToolsDB, "boolean", name, defaultValue)
     option:SetValueChangedCallback(function(_, value)
@@ -57,63 +74,63 @@ function BDTOptions:Initialize()
             category,
             "Enable Reload UI with R",
             "reloadUIR",
-            false,
+            BDTOptions.defaults.reloadUIR,
             "Enable reloading the UI with R in dev mode."
         )
         createSetting(
             category,
             "Enable Reload UI with Ctrl+R",
             "reloadUICTRL",
-            true,
+            BDTOptions.defaults.reloadUICTRL,
             "Enable reloading the UI with Ctrl+R in dev mode."
         )
         createSetting(
             category,
             "Enable Reload UI with Shift+R",
             "reloadUISHIFT",
-            false,
+            BDTOptions.defaults.reloadUISHIFT,
             "Enable reloading the UI with Shift+R in dev mode."
         )
         createSetting(
             category,
             "Enable Reload UI with Alt+R",
             "reloadUIALT",
-            false,
+            BDTOptions.defaults.reloadUIALT,
             "Enable reloading the UI with Alt+R in dev mode."
         )
         createSetting(
             category,
             "BugSack Integration",
             "enableBugSackIntegration",
-            true,
+            BDTOptions.defaults.enableBugSackIntegration,
             "Automatically enable BugSack error popups when development mode is active."
         )
         createSetting(
             category,
             "Auto AFK in Dev Mode",
             "enableAutoAFK",
-            true,
+            BDTOptions.defaults.enableAutoAFK,
             "Automatically set AFK status when entering development mode."
         )
         createSetting(
             category,
             "Reload UI on Dev Mode Toggle",
             "reloadUIOnDevModeToggle",
-            false,
+            BDTOptions.defaults.reloadUIOnDevModeToggle,
             "Automatically reload the UI when development mode is toggled on or off."
         )
         createSetting(
             category,
             "Disable reload keybinds while typing",
             "disableReloadWhileTyping",
-            true,
+            BDTOptions.defaults.disableReloadWhileTyping,
             "If enabled, all reload keybinds are ignored while typing in chat or edit boxes like in the WeakAuras addon."
         )
         createSetting(
             category,
             "Hide Interface Version in Dev Mode",
             "hideInterfaceVersionInDevMode",
-            false,
+            BDTOptions.defaults.hideInterfaceVersionInDevMode,
             "If enabled, the interface version will not be displayed in the dev mode status indicator."
         )
         BDTOptions.updateReloadUIOptions()
