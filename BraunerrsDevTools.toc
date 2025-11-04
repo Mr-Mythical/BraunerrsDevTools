@@ -9,9 +9,9 @@
 ## SavedVariables: BraunerrsDevToolsDB
 
 Data\Config.lua
+Options.lua
 Core.lua
 Utils\DevMode.lua
 Utils\KeybindManager.lua
 Utils\VariableManager.lua
-Options.lua
 DebugUI.lua
