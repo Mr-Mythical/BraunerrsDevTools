@@ -1,4 +1,4 @@
-## Interface: 110207, 50500, 11507
+## Interface: 120000, 110207, 50500, 11507
 ## Title: BraunerrsDevTools
 ## Notes: Development tools for addon and weakaura creators
 ## Version: @project-version@
