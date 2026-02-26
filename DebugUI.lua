@@ -2,6 +2,7 @@
 -- UI for displaying and searching global variables
 
 local DebugUI = {}
+local frame, searchBox, scrollFrame, content
 
 function DebugUI:Show()
     if not frame then
@@ -88,7 +89,7 @@ function DebugUI:UpdateList()
                 
                 btn:SetScript("OnClick", function(self, button)
                     if button == "LeftButton" then
-                        DebugUI:OnVariableClick(k, v)
+                        DebugUI:OnVariableClick(k)
                     end
                 end)
                 
@@ -128,8 +129,8 @@ function DebugUI:UpdateList()
     content:SetHeight(math.abs(y))
 end
 
-function DebugUI:OnVariableClick(varName, varValue)
-    if type(varValue) ~= "boolean" then return end
+function DebugUI:OnVariableClick(varName)
+    if type(_G[varName]) ~= "boolean" then return end
     
     local BDT = _G["BraunerrsDevTools"]
     if not BDT then

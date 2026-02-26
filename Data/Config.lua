@@ -8,8 +8,4 @@ Author: braunerr
 
 local _, BDT = ...
 
-BDT.Config = {
-    devBindings = {
-        ["CTRL-R"] = function() ReloadUI() end,
-    }
-}
+BDT.Config = {}

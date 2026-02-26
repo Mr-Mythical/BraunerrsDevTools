@@ -97,10 +97,10 @@ function DevMode:CreateStatusIndicator()
     })
     border:SetBackdropBorderColor(1, 0.5, 0, 1)
     
-        frame.statusText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-        frame.statusText:SetPoint("CENTER", frame, "CENTER", 0, 0)
-        frame.statusText:SetTextColor(1, 0.5, 0, 1)
-        frame.statusText:SetText("DEV MODE ACTIVE")
+    frame.statusText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    frame.statusText:SetPoint("CENTER", frame, "CENTER", 0, 0)
+    frame.statusText:SetTextColor(1, 0.5, 0, 1)
+    frame.statusText:SetText("DEV MODE ACTIVE")
     
     local iconFront = frame:CreateTexture(nil, "OVERLAY")
     iconFront:SetSize(20, 20)
@@ -132,14 +132,14 @@ function DevMode:UpdateIndicator()
             self.statusFrame.pulse:SetLooping("BOUNCE")
         end
         self.statusFrame.pulse:Play()
-            local _, _, _, interfaceVersion = GetBuildInfo()
-            if self.statusFrame.statusText then
-                local text = "DEV MODE ACTIVE"
-                if not BDT.db.hideInterfaceVersionInDevMode then
-                    text = text .. " | Interface: " .. tostring(interfaceVersion)
-                end
-                self.statusFrame.statusText:SetText(text)
+        local _, _, _, interfaceVersion = GetBuildInfo()
+        if self.statusFrame.statusText then
+            local text = "DEV MODE ACTIVE"
+            if not BDT.db.hideInterfaceVersionInDevMode then
+                text = text .. " | Interface: " .. tostring(interfaceVersion)
             end
+            self.statusFrame.statusText:SetText(text)
+        end
         self:ShowVariablesUI()
     else
         self.statusFrame:Hide()
@@ -330,56 +330,68 @@ function DevMode:SaveVariablesUIPosition()
     BDT.db.variablesUI.point = {point, parentName, relativePoint, xOfs, yOfs}
 end
 
+function DevMode:GetOrCreateFontString(index)
+    if not self.variablesTexts[index] then
+        local text = self.settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        self.variablesTexts[index] = text
+    end
+    return self.variablesTexts[index]
+end
+
 function DevMode:UpdateVariablesUI()
     if not self.settingsFrame then return end
-    
+
     local frame = self.settingsFrame
     local yOffset = -70  -- Start below the title and button
     local totalHeight = 90  -- Base height for title, button and padding
-    
-    for _, text in ipairs(self.variablesTexts) do
-        text:Hide()
-    end
-    self.variablesTexts = {}
-    
+    local textIndex = 0
+
     local hasVariables = false
-    
+
     if BDT.db.devModeToggleVariables and next(BDT.db.devModeToggleVariables) then
-        local devModeTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        textIndex = textIndex + 1
+        local devModeTitle = self:GetOrCreateFontString(textIndex)
         devModeTitle:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, yOffset)
         devModeTitle:SetText("Dev Mode Auto-Toggle:")
         devModeTitle:SetTextColor(0.8, 0.8, 1, 1)
-        table.insert(self.variablesTexts, devModeTitle)
+        devModeTitle:Show()
         yOffset = yOffset - 20
         totalHeight = totalHeight + 20
-        
+
         for varName, info in pairs(BDT.db.devModeToggleVariables) do
-            local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            textIndex = textIndex + 1
+            local text = self:GetOrCreateFontString(textIndex)
             text:SetPoint("TOPLEFT", frame, "TOPLEFT", 26, yOffset)
             local status = BDT.Utils.IsDebugVariableEnabled(varName) and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
             local category = info.category and (" [" .. info.category .. "]") or ""
             text:SetText(varName .. category .. ": " .. status)
             text:SetTextColor(1, 1, 1, 1)
-            table.insert(self.variablesTexts, text)
+            text:Show()
             yOffset = yOffset - 16
             totalHeight = totalHeight + 16
             hasVariables = true
         end
     end
-    
+
     if not hasVariables then
-        local noVarsText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        textIndex = textIndex + 1
+        local noVarsText = self:GetOrCreateFontString(textIndex)
         noVarsText:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, yOffset)
         noVarsText:SetText("No registered variables")
         noVarsText:SetTextColor(0.5, 0.5, 0.5, 1)
-        table.insert(self.variablesTexts, noVarsText)
+        noVarsText:Show()
         totalHeight = totalHeight + 16
     end
-    
+
+    -- Hide any extra font strings from previous updates
+    for i = textIndex + 1, #self.variablesTexts do
+        self.variablesTexts[i]:Hide()
+    end
+
     totalHeight = totalHeight + 20
     totalHeight = math.max(totalHeight, 120)
     totalHeight = math.min(totalHeight, 600)
-    
+
     frame:SetHeight(totalHeight)
 end
 

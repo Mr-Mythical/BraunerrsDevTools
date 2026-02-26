@@ -13,10 +13,6 @@ BDT = BDT or {}
 BDT.Utils = BDT.Utils or {}
 
 BDT.Utils.IsDebugVariableEnabled = function(varName)
-    if _G[varName] == nil then
-        return false
-    end
-
     return _G[varName] == true
 end
 
@@ -45,8 +41,8 @@ local function Initialize()
         print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt debug to open the debug UI")
         BDT.db.hasLoaded = true
     end
-        DevTools = DevTools or {}
-        DevTools.DebugUI = BraunerrsDevTools_DebugUI
+    DevTools = DevTools or {}
+    DevTools.DebugUI = BraunerrsDevTools_DebugUI
 end
 
 function BDTToggleDevMode()

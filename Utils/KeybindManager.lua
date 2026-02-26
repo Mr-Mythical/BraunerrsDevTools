@@ -10,7 +10,7 @@ local _, BDT = ...
 local KeybindManager = {}
 BDT.KeybindManager = KeybindManager
 
-local devBindings = BDT.Config.devBindings
+local devBindings = {}
 
 local frame = nil
 
@@ -34,19 +34,11 @@ function KeybindManager:HandleKeyPress(key)
     if not BDT.DevMode:IsEnabled() then
         return false
     end
-    
+
     if InCombatLockdown() then
         return false
     end
-    
-    if not BDT.DevMode:IsEnabled() then
-        return false
-    end
-    
-    if InCombatLockdown() then
-        return false
-    end
-    
+
     local reloadBehavior = BDT.db.reloadKeybindBehavior or "disable_while_typing"
     local isTyping = GetCurrentKeyBoardFocus() ~= nil
 

@@ -199,25 +199,11 @@ function VariableManager:CheckVariableExistence(varName)
 end
 
 function BDTEnableAllDebugModes()
-    if DevTools and DevTools.DebugUI then
-        for varName in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
-            _G[varName] = true
-        end
-        print("BDT: All registered debug variables enabled")
-    else
-        VariableManager:EnableAllDebugModes()
-    end
+    VariableManager:EnableAllDebugModes()
 end
 
 function BDTDisableAllDebugModes()
-    if DevTools and DevTools.DebugUI then
-        for varName in pairs(BDT.DebugAddonManager.registeredDebugVariables or {}) do
-            _G[varName] = false
-        end
-        print("BDT: All registered debug variables disabled")
-    else
-        VariableManager:DisableAllDebugModes()
-    end
+    VariableManager:DisableAllDebugModes()
 end
 
 function BDTEnableDevModeVariables()
