@@ -62,6 +62,19 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     end
 end)
 
+-- Chat clear slash command
+SLASH_BDT_CHATCLEAR1 = "/cc"
+SLASH_BDT_CHATCLEAR2 = "/clearchat"
+SlashCmdList["BDT_CHATCLEAR"] = function(msg)
+    for i = 1, NUM_CHAT_WINDOWS or 10 do
+        local frame = _G["ChatFrame" .. i]
+        if frame then
+            frame:Clear()
+        end
+    end
+    print("BDT: Chat cleared.")
+end
+
 SLASH_BRAUNERRSDEVTOOLS1 = "/bdt"
 SLASH_BRAUNERRSDEVTOOLS2 = "/braunerrsdev"
 SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
@@ -75,9 +88,36 @@ SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
         else
             print("BDT: Debug UI not available")
         end
+    elseif msg == "profile" then
+        local currentState = GetCVarBool("scriptProfile")
+        SetCVar("scriptProfile", currentState and "0" or "1")
+        print("BDT: Script Profiling " .. (currentState and "disabled" or "enabled") .. ". Reloading UI...")
+        ReloadUI()
+    elseif msg == "coords" then
+        if BDT.Utils and BDT.Utils.ToggleMouseCoords then
+            BDT.Utils.ToggleMouseCoords()
+        end
+    elseif msg:match("^grid") then
+        local _, size = msg:match("^(grid)%s*(%d*)")
+        if BDT.Utils and BDT.Utils.ToggleGrid then
+            BDT.Utils.ToggleGrid(size)
+        end
+    elseif msg == "profiler" or msg == "profilerui" then
+        if BDT.ProfilerUI then
+            if BDT.ProfilerUI.frame and BDT.ProfilerUI.frame:IsShown() then
+                BDT.ProfilerUI:Hide()
+            else
+                BDT.ProfilerUI:Show()
+            end
+        end
     elseif msg == "help" then
         print("BDT Commands:")
         print("  /bdt - Toggle dev mode")
+        print("  /bdt coords - Toggle mouse coordinates overlay")
+        print("  /bdt grid [size] - Toggle screen alignment grid")
+        print("  /bdt profile - Toggle script profiling and reload")
+        print("  /bdt profiler - Toggle Addon CPU Profiler UI")
+        print("  /cc or /clearchat - Clear all chat windows")
         print("  /bdt debug - Open debug UI directly")
         print("  /bdt help - Show this help")
         print("")

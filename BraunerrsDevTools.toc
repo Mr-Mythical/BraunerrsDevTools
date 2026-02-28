@@ -14,4 +14,8 @@ Core.lua
 Utils\DevMode.lua
 Utils\KeybindManager.lua
 Utils\VariableManager.lua
+Utils\MouseCoords.lua
+Utils\Grid.lua
+Utils\ProfilerUI.lua
+Utils\QuickActions.lua
 DebugUI.lua

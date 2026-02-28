@@ -149,6 +149,9 @@ function DevMode:UpdateIndicator()
         if self.settingsFrame then
             self.settingsFrame:Hide()
         end
+        if BDT.QuickActions then
+            BDT.QuickActions:Hide()
+        end
     end
 end
 
@@ -402,4 +405,8 @@ function DevMode:ShowVariablesUI()
     
     self:UpdateVariablesUI()
     self.settingsFrame:Show()
+    
+    if BDT.QuickActions then
+        BDT.QuickActions:Show()
+    end
 end
