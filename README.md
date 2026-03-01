@@ -4,7 +4,7 @@
 
 ---
 
-A toolkit for World of Warcraft addon and WeakAura creators.
+BraunerrsDevTools speeds up World of Warcraft addon and WeakAura development with Dev Mode (safe reloads, AFK/BugSack support, auto debug toggles), Quick Actions (profiler, grid, coords, profile toggle), and universal debug variable control.
 
 > ⚠️ **Early Development**: This addon is in early development. Features may change and bugs may occur.
 
