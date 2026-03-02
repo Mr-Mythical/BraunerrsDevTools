@@ -38,7 +38,7 @@ local function Initialize()
     BDT.Options:Initialize()
     
     if not BDT.db.hasLoaded then
-        print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt debug to open the debug UI")
+        print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt help for commands.")
         BDT.db.hasLoaded = true
     end
     DevTools = DevTools or {}
