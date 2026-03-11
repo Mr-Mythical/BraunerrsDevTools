@@ -21,16 +21,12 @@ function ProfilerUI:CreateUI()
     frame.title:SetFontObject("GameFontHighlight")
     frame.title:SetPoint("LEFT", frame.TitleBg, "LEFT", 5, 0)
     frame.title:SetText("Addon CPU Profiler (ms)")
-    
-    -- BasicFrameTemplateWithInset already provides a CloseButton. We just need to make sure we don't create a second one.
 
-    -- Info Text
     local infoText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     infoText:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -35)
     infoText:SetText("Updates automatically. Sorting by CPU usage (Descending)")
     infoText:SetTextColor(0.7, 0.7, 0.7)
 
-    -- Scroll Frame
     local scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
     scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -60)
     scrollFrame:SetSize(350, 420)
@@ -43,7 +39,6 @@ function ProfilerUI:CreateUI()
     self.content = content
     self.addonRows = {}
     
-    -- Update Loop
     local updateInterval = 1.0  -- Update every 1 second
     local timeSinceLastUpdate = 0
     frame:SetScript("OnUpdate", function(self, elapsed)
@@ -68,11 +63,9 @@ function ProfilerUI:UpdateData()
 
     local addonData = {}
     
-    -- C_AddOns.GetNumAddOns() is the modern API
     local numAddons = C_AddOns and C_AddOns.GetNumAddOns and C_AddOns.GetNumAddOns() or GetNumAddOns()
     
     for i = 1, numAddons do
-        -- C_AddOns.GetAddOnInfo is the modern API
         local name, title, notes, loadable, reason, security, newVersion
         if C_AddOns and C_AddOns.GetAddOnInfo then
             name, title, notes, loadable, reason, security, newVersion = C_AddOns.GetAddOnInfo(i)
