@@ -12,14 +12,14 @@ BraunerrsDevTools speeds up World of Warcraft addon and WeakAura development wit
 
 ### 🛠️ Dev Mode (`/bdt`)
 The core feature of this addon. When toggled on, Dev Mode provides:
-- **Unhindered UI Reloads**: Use `Ctrl+R` (or custom keybinds) to reload your UI. Keybinds are safely ignored while typing in chat or edit boxes.
+- **Unhindered UI Reloads**: Use `Ctrl+R` by default (or enable `R`, `Shift+R`, and `Alt+R` variants in settings) to reload your UI. Keybinds are ignored while typing in chat or edit boxes.
 - **Auto-AFK & BugSack Support**: Optionally sets your character AFK and automatically enables BugSack error popups to prevent interruptions.
 - **Automatic Debugging**: Automatically enables your configured global addon debug modes.
 
 *Settings for Dev Mode can be configured via Esc > Interface > AddOns > Braunerr's Dev Tools.*
 
 ### 🚀 Quick Action Tools
-A suite of utilities designed to speed up common addon development tasks. Accessible via the **Quick Actions** floating window or slash commands:
+A suite of utilities designed to speed up common addon development tasks. Accessible via the **Quick Actions** floating window and slash commands:
 
 - **Addon CPU Profiler** (`/bdt profiler`): A real-time tracking window listing all loaded addons sorted by CPU consumption (requires Profiling enabled).
 - **Profile Toggle & Reload** (`/bdt profile`): Instantly toggles WoW's `scriptProfile` CVar and reloads your UI.

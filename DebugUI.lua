@@ -1,5 +1,5 @@
 -- DebugUI.lua
--- UI for displaying and searching global variables
+-- UI for displaying and toggling global boolean variables
 
 local DebugUI = {}
 local frame, searchBox, scrollFrame, content

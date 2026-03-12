@@ -1,8 +1,8 @@
 --[[
 Core.lua - Main addon logic and initialization
 
-Purpose: Handles addon initialization, settings management, and slash commands for debug variable control
-Dependencies: BDT.Config, BDT.DevMode, BDT.KeybindManager, BDT.Options
+Purpose: Handles addon initialization, settings management, and slash command routing
+Dependencies: BDT.DevMode, BDT.KeybindManager, BDT.Options, BDT.ProfilerUI, BDT.Utils
 Author: braunerr
 --]]
 

@@ -2,7 +2,7 @@
 DevMode.lua - Development mode management
 
 Purpose: Handles dev mode state, UI indicators, addon integrations, and combat safety
-Dependencies: BDT.db, BDT.KeybindManager
+Dependencies: BDT.db, BDT.KeybindManager, BDT.VariableManager
 Author: braunerr
 --]]
 

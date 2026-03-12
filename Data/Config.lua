@@ -1,7 +1,7 @@
 --[[
 Config.lua - Configuration data and defaults
 
-Purpose: Stores default settings, configuration options, and other addon data
+Purpose: Provides the shared config namespace for addon modules
 Dependencies: None
 Author: braunerr
 --]]

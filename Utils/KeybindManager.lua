@@ -2,7 +2,7 @@
 KeybindManager.lua - Manages keybinds for development tools
 
 Purpose: Handles keybind registration, event processing, and state management for reload UI functionality
-Dependencies: BDT.Config, BDT.DevMode, BDT.db
+Dependencies: BDT.DevMode, BDT.db
 Author: braunerr
 --]]
 
