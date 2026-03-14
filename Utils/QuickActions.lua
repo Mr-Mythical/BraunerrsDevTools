@@ -1,3 +1,11 @@
+--[[
+QuickActions.lua - Quick actions floating panel
+
+Purpose: Provides one-click access to frequent development actions (profiling, frame tools, grid, and chat clear)
+Dependencies: BDT.db, BDT.Utils, BDT.ProfilerUI
+Author: braunerr
+--]]
+
 local _, BDT = ...
 local QuickActions = {}
 BDT.QuickActions = QuickActions

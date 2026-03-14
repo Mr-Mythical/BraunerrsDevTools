@@ -1,3 +1,11 @@
+--[[
+ProfilerUI.lua - Addon CPU profiler window
+
+Purpose: Displays per-addon CPU usage and keeps it updated while the profiler UI is open
+Dependencies: BDT, scriptProfile CVar
+Author: braunerr
+--]]
+
 local _, BDT = ...
 local ProfilerUI = {}
 BDT.ProfilerUI = ProfilerUI

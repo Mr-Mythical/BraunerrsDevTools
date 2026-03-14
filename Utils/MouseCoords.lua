@@ -1,3 +1,11 @@
+--[[
+MouseCoords.lua - Mouse coordinate overlay tool
+
+Purpose: Shows cursor coordinates in UI space and allows dragging the overlay
+Dependencies: BDT.Utils
+Author: braunerr
+--]]
+
 local _, BDT = ...
 BDT.Utils = BDT.Utils or {}
 

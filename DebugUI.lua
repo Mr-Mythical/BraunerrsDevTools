@@ -1,5 +1,10 @@
--- DebugUI.lua
--- UI for displaying and toggling global boolean variables
+--[[
+DebugUI.lua - Debug variable browser and registration UI
+
+Purpose: Displays global boolean variables and lets users register/unregister them for dev mode auto-toggle
+Dependencies: BDT.db, BDT.DevMode
+Author: braunerr
+--]]
 
 local DebugUI = {}
 local frame, searchBox, scrollFrame, content

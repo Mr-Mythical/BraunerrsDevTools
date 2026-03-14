@@ -1,3 +1,11 @@
+--[[
+Grid.lua - Screen alignment grid overlay
+
+Purpose: Draws a center-aligned grid overlay for UI layout and positioning work
+Dependencies: BDT.Utils
+Author: braunerr
+--]]
+
 local _, BDT = ...
 BDT.Utils = BDT.Utils or {}
 
