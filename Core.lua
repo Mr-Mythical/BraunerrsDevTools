@@ -120,10 +120,6 @@ SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
         print("  /cc or /clearchat - Clear all chat windows")
         print("  /bdt debug - Open debug UI directly")
         print("  /bdt help - Show this help")
-        print("")
-        print("When dev mode is active:")
-        print("  A window shows registered variables")
-        print("  Click 'Debug UI' button to open full variable manager")
     else
         print("BDT: Unknown command. Opening Debug UI...")
         if DevTools and DevTools.DebugUI then
