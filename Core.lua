@@ -77,6 +77,19 @@ end
 
 SLASH_BRAUNERRSDEVTOOLS1 = "/bdt"
 SLASH_BRAUNERRSDEVTOOLS2 = "/braunerrsdev"
+
+local function ShowHelp()
+    print("BDT Commands:")
+    print("  /bdt - Toggle dev mode")
+    print("  /bdt coords - Toggle mouse coordinates overlay")
+    print("  /bdt grid [size] - Toggle screen alignment grid")
+    print("  /bdt profile - Toggle script profiling and reload")
+    print("  /bdt profiler - Toggle Addon CPU Profiler UI")
+    print("  /cc or /clearchat - Clear all chat windows")
+    print("  /bdt debug - Open debug UI directly")
+    print("  /bdt help - Show this help")
+end
+
 SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
     msg = msg:lower():gsub("^%s+", ""):gsub("%s+$", "")
     
@@ -111,21 +124,9 @@ SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
             end
         end
     elseif msg == "help" then
-        print("BDT Commands:")
-        print("  /bdt - Toggle dev mode")
-        print("  /bdt coords - Toggle mouse coordinates overlay")
-        print("  /bdt grid [size] - Toggle screen alignment grid")
-        print("  /bdt profile - Toggle script profiling and reload")
-        print("  /bdt profiler - Toggle Addon CPU Profiler UI")
-        print("  /cc or /clearchat - Clear all chat windows")
-        print("  /bdt debug - Open debug UI directly")
-        print("  /bdt help - Show this help")
+        ShowHelp()
     else
-        print("BDT: Unknown command. Opening Debug UI...")
-        if DevTools and DevTools.DebugUI then
-            DevTools.DebugUI:Show()
-        else
-            print("BDT: Debug UI not available. Use /bdt help for commands.")
-        end
+        print("BDT: Unknown command. Showing help...")
+        ShowHelp()
     end
 end
