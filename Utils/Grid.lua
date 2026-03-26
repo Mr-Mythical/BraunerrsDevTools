@@ -11,6 +11,7 @@ BDT.Utils = BDT.Utils or {}
 
 local gridFrame = nil
 local isGridEnabled = false
+local currentGridSize = 64
 
 local function CreateGrid(gridSize)
     if gridFrame then 
@@ -83,22 +84,63 @@ local function CreateGrid(gridSize)
 end
 
 function BDT.Utils.ToggleGrid(gridSize)
-    if type(gridSize) == "string" and gridSize ~= "" then
-        gridSize = tonumber(gridSize)
-    else
-        gridSize = nil
-    end
-    gridSize = gridSize or 64
-    
-    isGridEnabled = not isGridEnabled
-    if isGridEnabled then
-        CreateGrid(gridSize)
-        gridFrame:Show()
-        print("BDT: Grid enabled (Size: " .. gridSize .. "px).")
-    else
-        if gridFrame then
-            gridFrame:Hide()
+    local requestedSize
+
+    if type(gridSize) == "string" then
+        gridSize = gridSize:lower():gsub("^%s+", ""):gsub("%s+$", "")
+        if gridSize == "" then
+            requestedSize = nil
+        elseif gridSize == "off" or gridSize == "0" then
+            requestedSize = 0
+        else
+            requestedSize = tonumber(gridSize)
         end
-        print("BDT: Grid disabled.")
+    elseif type(gridSize) == "number" then
+        requestedSize = gridSize
     end
+
+    if requestedSize == 0 then
+        if isGridEnabled and gridFrame then
+            gridFrame:Hide()
+            isGridEnabled = false
+            print("BDT: Grid disabled.")
+        else
+            print("BDT: Grid is already disabled.")
+        end
+        return
+    end
+
+    requestedSize = requestedSize or currentGridSize or 64
+    if requestedSize < 8 then
+        requestedSize = 8
+    end
+
+    if isGridEnabled then
+        if requestedSize == currentGridSize then
+            if gridFrame then
+                gridFrame:Hide()
+            end
+            isGridEnabled = false
+            print("BDT: Grid disabled.")
+        else
+            CreateGrid(requestedSize)
+            currentGridSize = requestedSize
+            if gridFrame then
+                gridFrame:Show()
+            end
+            print("BDT: Grid resized (Size: " .. requestedSize .. "px).")
+        end
+    else
+        CreateGrid(requestedSize)
+        currentGridSize = requestedSize
+        isGridEnabled = true
+        if gridFrame then
+            gridFrame:Show()
+        end
+        print("BDT: Grid enabled (Size: " .. requestedSize .. "px).")
+    end
+end
+
+function BDT.Utils.GetGridInfo()
+    return isGridEnabled, currentGridSize
 end

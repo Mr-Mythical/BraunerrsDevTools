@@ -129,12 +129,40 @@ function QuickActions:CreateUI()
     gridBtn:SetScript("OnClick", function()
         if BDT.Utils and BDT.Utils.ToggleGrid then
             BDT.Utils.ToggleGrid(nil)
+            QuickActions:UpdateGridStatus()
         end
     end)
-    
+
+    local gridInfo = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    gridInfo:SetPoint("TOP", gridBtn, "BOTTOM", 0, -4)
+    gridInfo:SetText("Grid: Off")
+    self.gridInfo = gridInfo
+
+    local grid32Btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    grid32Btn:SetSize(85, 20)
+    grid32Btn:SetPoint("TOP", gridInfo, "BOTTOM", 0, -8)
+    grid32Btn:SetText("Grid 32")
+    grid32Btn:SetScript("OnClick", function()
+        if BDT.Utils and BDT.Utils.ToggleGrid then
+            BDT.Utils.ToggleGrid(32)
+            QuickActions:UpdateGridStatus()
+        end
+    end)
+
+    local grid64Btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    grid64Btn:SetSize(85, 20)
+    grid64Btn:SetPoint("TOP", grid32Btn, "BOTTOM", 0, -5)
+    grid64Btn:SetText("Grid 64")
+    grid64Btn:SetScript("OnClick", function()
+        if BDT.Utils and BDT.Utils.ToggleGrid then
+            BDT.Utils.ToggleGrid(64)
+            QuickActions:UpdateGridStatus()
+        end
+    end)
+
     local ccBtn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     ccBtn:SetSize(180, 25)
-    ccBtn:SetPoint("TOP", gridBtn, "BOTTOM", 0, -5)
+    ccBtn:SetPoint("TOP", grid64Btn, "BOTTOM", 0, -10)
     ccBtn:SetText("Clear Chat")
     ccBtn:SetScript("OnClick", function()
         if SlashCmdList["BDT_CHATCLEAR"] then
@@ -172,11 +200,24 @@ function QuickActions:UpdateProfileText()
     end
 end
 
+function QuickActions:UpdateGridStatus()
+    if not self.gridInfo or not BDT.Utils or not BDT.Utils.GetGridInfo then
+        return
+    end
+    local isEnabled, size = BDT.Utils.GetGridInfo()
+    if isEnabled then
+        self.gridInfo:SetText("Grid: |cFF00FF00ON|r (" .. size .. "px)")
+    else
+        self.gridInfo:SetText("Grid: |cFFFF0000OFF|r")
+    end
+end
+
 function QuickActions:Show()
     if not self.frame then
         self:CreateUI()
     end
     self:UpdateProfileText()
+    self:UpdateGridStatus()
     self.frame:Show()
 end
 

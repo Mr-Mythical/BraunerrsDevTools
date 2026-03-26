@@ -82,7 +82,7 @@ local function ShowHelp()
     print("BDT Commands:")
     print("  /bdt - Toggle dev mode")
     print("  /bdt coords - Toggle mouse coordinates overlay")
-    print("  /bdt grid [size] - Toggle screen alignment grid")
+    print("  /bdt grid [size|off] - Toggle/resize screen alignment grid (default 64, e.g. 32/64)")
     print("  /bdt profile - Toggle script profiling and reload")
     print("  /bdt profiler - Toggle Addon CPU Profiler UI")
     print("  /cc or /clearchat - Clear all chat windows")
@@ -111,9 +111,10 @@ SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
             BDT.Utils.ToggleMouseCoords()
         end
     elseif msg:match("^grid") then
-        local _, size = msg:match("^(grid)%s*(%d*)")
+        local cmd, arg = msg:match("^(%S*)%s*(.*)$")
+        arg = (arg ~= "") and arg or nil
         if BDT.Utils and BDT.Utils.ToggleGrid then
-            BDT.Utils.ToggleGrid(size)
+            BDT.Utils.ToggleGrid(arg)
         end
     elseif msg == "profiler" or msg == "profilerui" then
         if BDT.ProfilerUI then
