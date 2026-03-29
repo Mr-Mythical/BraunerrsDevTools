@@ -14,7 +14,7 @@ function QuickActions:CreateUI()
     if self.frame then return end
     
     local frame = CreateFrame("Frame", "BDTQuickActionsFrame", UIParent, "BackdropTemplate")
-    frame:SetSize(220, 260)
+    frame:SetSize(220, 340)
 
     -- Load saved position or use default
     if BDT.db and BDT.db.quickActionsUI and BDT.db.quickActionsUI.point then
