@@ -14,7 +14,7 @@ function QuickActions:CreateUI()
     if self.frame then return end
     
     local frame = CreateFrame("Frame", "BDTQuickActionsFrame", UIParent, "BackdropTemplate")
-    frame:SetSize(220, 340)
+    frame:SetSize(220, 375)
 
     -- Load saved position or use default
     if BDT.db and BDT.db.quickActionsUI and BDT.db.quickActionsUI.point then
@@ -167,6 +167,16 @@ function QuickActions:CreateUI()
     ccBtn:SetScript("OnClick", function()
         if SlashCmdList["BDT_CHATCLEAR"] then
             SlashCmdList["BDT_CHATCLEAR"]("")
+        end
+    end)
+
+    local mouseCoordsBtn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    mouseCoordsBtn:SetSize(180, 25)
+    mouseCoordsBtn:SetPoint("TOP", ccBtn, "BOTTOM", 0, -5)
+    mouseCoordsBtn:SetText("Toggle Mouse Coords")
+    mouseCoordsBtn:SetScript("OnClick", function()
+        if BDT.Utils and BDT.Utils.ToggleMouseCoords then
+            BDT.Utils.ToggleMouseCoords()
         end
     end)
 
