@@ -64,6 +64,16 @@ end
 function DevMode:OnLeaveCombat()
     if self.wasEnabledBeforeCombat then
         self.wasEnabledBeforeCombat = false
+        
+        self.isEnabled = true
+        BDT.db.devMode = true
+        
+        self:HandleAFKStatus()
+        self:UpdateAddonIntegrations()
+        BDT.KeybindManager:UpdateBindingsState()
+        self:UpdateIndicator()
+        
+        print("BDT: Dev mode re-enabled - left combat")
     end
 end
 

@@ -32,7 +32,12 @@ function BDT.Utils.ToggleMouseCoords()
         coordsFrame.text = coordsFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         coordsFrame.text:SetPoint("CENTER")
         
+        local updateInterval = 0.03 -- ~30fps, visually smooth but much cheaper
+        local timeSinceUpdate = 0
         coordsFrame:SetScript("OnUpdate", function(self, elapsed)
+            timeSinceUpdate = timeSinceUpdate + elapsed
+            if timeSinceUpdate < updateInterval then return end
+            timeSinceUpdate = 0
             local uiScale = UIParent:GetEffectiveScale()
             local mx, my = GetCursorPosition()
             local uiX, uiY = mx / uiScale, my / uiScale

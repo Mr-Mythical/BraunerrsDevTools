@@ -13,28 +13,50 @@ local gridFrame = nil
 local isGridEnabled = false
 local currentGridSize = 64
 
+local gridTextures = {}
+
+local function HideAllGridTextures()
+    for _, t in ipairs(gridTextures) do
+        t:Hide()
+    end
+end
+
+local function GetOrCreateGridTexture(index)
+    if gridTextures[index] then
+        gridTextures[index]:Show()
+        return gridTextures[index]
+    end
+    local t = gridFrame:CreateTexture(nil, "BACKGROUND")
+    gridTextures[index] = t
+    return t
+end
+
 local function CreateGrid(gridSize)
-    if gridFrame then 
-        gridFrame:Hide() 
-        gridFrame = nil
+    if not gridFrame then
+        gridFrame = CreateFrame("Frame", "BDT_GridOverlay", UIParent)
+        gridFrame:SetAllPoints()
+        gridFrame:SetFrameStrata("BACKGROUND")
+        gridFrame:SetFrameLevel(0)
     end
     
-    gridFrame = CreateFrame("Frame", "BDT_GridOverlay", UIParent)
-    gridFrame:SetAllPoints()
-    gridFrame:SetFrameStrata("BACKGROUND")
-    gridFrame:SetFrameLevel(0)
+    HideAllGridTextures()
     
     local width, height = UIParent:GetWidth(), UIParent:GetHeight()
     local centerX, centerY = width / 2, height / 2
+    local texIndex = 0
     
     -- Draw center lines first
-    local vCenter = gridFrame:CreateTexture(nil, "BACKGROUND")
+    texIndex = texIndex + 1
+    local vCenter = GetOrCreateGridTexture(texIndex)
+    vCenter:ClearAllPoints()
     vCenter:SetColorTexture(1, 0, 0, 0.7)
     vCenter:SetWidth(1)
     vCenter:SetPoint("BOTTOM", gridFrame, "BOTTOMLEFT", centerX, 0)
     vCenter:SetPoint("TOP", gridFrame, "TOPLEFT", centerX, 0)
     
-    local hCenter = gridFrame:CreateTexture(nil, "BACKGROUND")
+    texIndex = texIndex + 1
+    local hCenter = GetOrCreateGridTexture(texIndex)
+    hCenter:ClearAllPoints()
     hCenter:SetColorTexture(1, 0, 0, 0.7)
     hCenter:SetHeight(1)
     hCenter:SetPoint("LEFT", gridFrame, "BOTTOMLEFT", 0, centerY)
@@ -49,7 +71,9 @@ local function CreateGrid(gridSize)
         
         -- Right vertical
         if centerX + offset <= width then
-            local t = gridFrame:CreateTexture(nil, "BACKGROUND")
+            texIndex = texIndex + 1
+            local t = GetOrCreateGridTexture(texIndex)
+            t:ClearAllPoints()
             t:SetColorTexture(0, 0, 0, 1)
             t:SetWidth(1)
             t:SetPoint("BOTTOM", gridFrame, "BOTTOMLEFT", centerX + offset, 0)
@@ -57,7 +81,9 @@ local function CreateGrid(gridSize)
         end
         -- Left vertical
         if centerX - offset >= 0 then
-            local t = gridFrame:CreateTexture(nil, "BACKGROUND")
+            texIndex = texIndex + 1
+            local t = GetOrCreateGridTexture(texIndex)
+            t:ClearAllPoints()
             t:SetColorTexture(0, 0, 0, 1)
             t:SetWidth(1)
             t:SetPoint("BOTTOM", gridFrame, "BOTTOMLEFT", centerX - offset, 0)
@@ -66,7 +92,9 @@ local function CreateGrid(gridSize)
         
         -- Top horizontal
         if centerY + offset <= height then
-            local t = gridFrame:CreateTexture(nil, "BACKGROUND")
+            texIndex = texIndex + 1
+            local t = GetOrCreateGridTexture(texIndex)
+            t:ClearAllPoints()
             t:SetColorTexture(0, 0, 0, 1)
             t:SetHeight(1)
             t:SetPoint("LEFT", gridFrame, "BOTTOMLEFT", 0, centerY + offset)
@@ -74,7 +102,9 @@ local function CreateGrid(gridSize)
         end
         -- Bottom horizontal
         if centerY - offset >= 0 then
-            local t = gridFrame:CreateTexture(nil, "BACKGROUND")
+            texIndex = texIndex + 1
+            local t = GetOrCreateGridTexture(texIndex)
+            t:ClearAllPoints()
             t:SetColorTexture(0, 0, 0, 1)
             t:SetHeight(1)
             t:SetPoint("LEFT", gridFrame, "BOTTOMLEFT", 0, centerY - offset)
