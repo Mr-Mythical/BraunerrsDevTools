@@ -133,6 +133,9 @@ function BDT.Utils.ToggleGrid(gridSize)
         if isGridEnabled and gridFrame then
             gridFrame:Hide()
             isGridEnabled = false
+            if BDT.db then
+                BDT.db.gridEnabled = false
+            end
             print("BDT: Grid disabled.")
         else
             print("BDT: Grid is already disabled.")
@@ -151,12 +154,18 @@ function BDT.Utils.ToggleGrid(gridSize)
                 gridFrame:Hide()
             end
             isGridEnabled = false
+            if BDT.db then
+                BDT.db.gridEnabled = false
+            end
             print("BDT: Grid disabled.")
         else
             CreateGrid(requestedSize)
             currentGridSize = requestedSize
             if gridFrame then
                 gridFrame:Show()
+            end
+            if BDT.db then
+                BDT.db.gridSize = requestedSize
             end
             print("BDT: Grid resized (Size: " .. requestedSize .. "px).")
         end
@@ -167,10 +176,26 @@ function BDT.Utils.ToggleGrid(gridSize)
         if gridFrame then
             gridFrame:Show()
         end
+        if BDT.db then
+            BDT.db.gridEnabled = true
+            BDT.db.gridSize = requestedSize
+        end
         print("BDT: Grid enabled (Size: " .. requestedSize .. "px).")
     end
 end
 
 function BDT.Utils.GetGridInfo()
     return isGridEnabled, currentGridSize
+end
+
+function BDT.Utils.RestoreGrid()
+    if BDT.db and BDT.db.gridEnabled then
+        local size = BDT.db.gridSize or 64
+        CreateGrid(size)
+        currentGridSize = size
+        isGridEnabled = true
+        if gridFrame then
+            gridFrame:Show()
+        end
+    end
 end

@@ -26,6 +26,9 @@ local DEFAULTS = {
     reloadUIOnDevModeToggle = false,
     disableReloadWhileTyping = true,
     hideInterfaceVersionInDevMode = false,
+    gridEnabled = false,
+    gridSize = 64,
+    mouseCoordsEnabled = false,
 }
 
 -- Keep backwards compatibility

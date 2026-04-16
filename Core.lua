@@ -32,11 +32,21 @@ end
 
 local function Initialize()
     InitializeSettings()
-    
+
     BDT.DevMode:Initialize()
     BDT.KeybindManager:Initialize()
     BDT.Options:Initialize()
-    
+
+    -- Restore tool states if Dev Mode is active
+    if BDT.db.devMode then
+        if BDT.Utils.RestoreGrid then
+            BDT.Utils.RestoreGrid()
+        end
+        if BDT.Utils.RestoreMouseCoords then
+            BDT.Utils.RestoreMouseCoords()
+        end
+    end
+
     if not BDT.db.hasLoaded then
         print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt help for commands.")
         BDT.db.hasLoaded = true

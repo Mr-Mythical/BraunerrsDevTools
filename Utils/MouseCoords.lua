@@ -48,9 +48,23 @@ function BDT.Utils.ToggleMouseCoords()
     isEnabled = not isEnabled
     if isEnabled then
         coordsFrame:Show()
+        if BDT.db then
+            BDT.db.mouseCoordsEnabled = true
+        end
         print("BDT: Mouse Coordinates enabled. Drag the box to move it.")
     else
         coordsFrame:Hide()
+        if BDT.db then
+            BDT.db.mouseCoordsEnabled = false
+        end
         print("BDT: Mouse Coordinates disabled.")
+    end
+end
+
+function BDT.Utils.RestoreMouseCoords()
+    if BDT.db and BDT.db.mouseCoordsEnabled then
+        if not isEnabled then
+            BDT.Utils.ToggleMouseCoords()
+        end
     end
 end
