@@ -1,4 +1,4 @@
-## Interface: 120001, 50500, 11507
+## Interface: 120005, 50500, 11507
 ## Title: BraunerrsDevTools
 ## Notes: Speeds up WoW addon and WeakAura development with Dev Mode (safe reloads/debug toggles), Quick Actions (profiler/grid/coords), and debug variable control.
 ## Version: @project-version@
