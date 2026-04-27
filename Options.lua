@@ -120,8 +120,4 @@ function BDTOptions:Initialize()
         
         BDTOptions.updateReloadUIOptions()
     end)
-    
-    if not success then
-        print("BDT: Options panel registration failed: " .. tostring(result))
-    end
 end
