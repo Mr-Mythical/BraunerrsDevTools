@@ -217,14 +217,7 @@ function DevMode:HandleBugSackIntegration()
         return
     end
     
-    local isBugSackLoaded = false
-    if C_AddOns and C_AddOns.IsAddOnLoaded then
-        isBugSackLoaded = C_AddOns.IsAddOnLoaded("BugSack")
-    elseif IsAddOnLoaded then
-        isBugSackLoaded = IsAddOnLoaded("BugSack")
-    else
-        isBugSackLoaded = (_G.BugSack ~= nil)
-    end
+    local isBugSackLoaded = BDT.Compat and BDT.Compat.IsAddOnLoaded("BugSack") or (_G.BugSack ~= nil)
     
     if not isBugSackLoaded then
         return
@@ -249,10 +242,14 @@ function DevMode:HandleBugSackIntegration()
 end
 
 function DevMode:HandleAddonDebugIntegration()
+    if not BDT.VariableManager then
+        return
+    end
+
     if self.isEnabled then
-        BDTEnableDevModeVariables()
+        BDT.VariableManager:EnableDevModeVariables()
     else
-        BDTDisableDevModeVariables()
+        BDT.VariableManager:DisableDevModeVariables()
     end
 end
 
@@ -265,25 +262,7 @@ function DevMode:CreateVariablesUI()
     
     local frame = CreateFrame("Frame", "BDTSettingsFrame", UIParent, "BackdropTemplate")
     frame:SetSize(420, 200)
-    
-    if BDT.db and BDT.db.variablesUI and BDT.db.variablesUI.point then
-        local saved = BDT.db.variablesUI.point
-        local point, parent, relativePoint, xOfs, yOfs
-        if #saved == 5 then
-            point, parent, relativePoint, xOfs, yOfs = unpack(saved)
-        elseif #saved == 4 then
-            point, relativePoint, xOfs, yOfs = unpack(saved)
-            parent = "UIParent"
-        end
-        if point and parent and relativePoint and type(xOfs) == "number" and type(yOfs) == "number" then
-            local parentFrame = _G[parent] or UIParent
-            frame:SetPoint(point, parentFrame, relativePoint, xOfs, yOfs)
-        else
-            frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-        end
-    else
-        frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    end
+    BDT.UI.RestoreFramePosition(frame, "variablesUI")
     
     frame:SetFrameStrata("DIALOG")
     frame:SetFrameLevel(200)
@@ -318,11 +297,7 @@ function DevMode:CreateVariablesUI()
     debugUIButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -15)
     debugUIButton:SetText("Debug UI")
     debugUIButton:SetScript("OnClick", function()
-        if DevTools and DevTools.DebugUI then
-            DevTools.DebugUI:Show()
-        else
-            print("BDT: Debug UI not available")
-        end
+        BDT.Actions.OpenDebugUI()
     end)
     
     self.variablesTexts = {}
@@ -333,14 +308,8 @@ end
 
 function DevMode:SaveVariablesUIPosition()
     if not self.settingsFrame then return end
-    
-    if not BDT.db.variablesUI then
-        BDT.db.variablesUI = {}
-    end
-    
-    local point, relativeTo, relativePoint, xOfs, yOfs = self.settingsFrame:GetPoint()
-    local parentName = "UIParent"
-    BDT.db.variablesUI.point = {point, parentName, relativePoint, xOfs, yOfs}
+
+    BDT.UI.SaveFramePosition(self.settingsFrame, "variablesUI")
 end
 
 function DevMode:GetOrCreateFontString(index)

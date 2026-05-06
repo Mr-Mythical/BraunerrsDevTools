@@ -39,23 +39,8 @@ function KeybindManager:HandleKeyPress(key)
         return false
     end
 
-    local reloadBehavior = BDT.db.reloadKeybindBehavior or "disable_while_typing"
-    local isTyping = GetCurrentKeyBoardFocus() ~= nil
-
-    if reloadBehavior == "disable_while_typing" and isTyping then
+    if BDT.db.disableReloadWhileTyping and GetCurrentKeyBoardFocus() ~= nil then
         return false
-    end
-
-    if reloadBehavior == "disable_r_shift_r_while_typing" and isTyping then
-        local isCtrl = IsControlKeyDown()
-        local isAlt = IsAltKeyDown()
-        local isShift = IsShiftKeyDown()
-        if key == "R" and not isCtrl and not isAlt then
-            -- Only shift or no modifier
-            if not isShift or (isShift and not isCtrl and not isAlt) then
-                return false
-            end
-        end
     end
     
     if not BDT.db.enableReloadUIKeybind then
@@ -95,10 +80,18 @@ function KeybindManager:UpdateBindingsState()
     local allowALT = BDT.db.reloadUIALT
     devBindings = {}
 
-    if allowR then devBindings["R"] = function() ReloadUI() end end
-    if allowCTRL then devBindings["CTRL-R"] = function() ReloadUI() end end
-    if allowSHIFT then devBindings["SHIFT-R"] = function() ReloadUI() end end
-    if allowALT then devBindings["ALT-R"] = function() ReloadUI() end end
+    local function reloadAction()
+        if BDT.Actions then
+            BDT.Actions.ReloadUI()
+        else
+            ReloadUI()
+        end
+    end
+
+    if allowR then devBindings["R"] = reloadAction end
+    if allowCTRL then devBindings["CTRL-R"] = reloadAction end
+    if allowSHIFT then devBindings["SHIFT-R"] = reloadAction end
+    if allowALT then devBindings["ALT-R"] = reloadAction end
 
     if enabled then
         frame:EnableKeyboard(true)

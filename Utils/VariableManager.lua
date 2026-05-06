@@ -13,6 +13,12 @@ BDT.Utils = BDT.Utils or {}
 
 local VariableManager = BDT.VariableManager
 
+local function RefreshDevModeUI()
+    if BDT.DevMode and BDT.DevMode.settingsFrame and BDT.DevMode.settingsFrame:IsShown() then
+        BDT.DevMode:UpdateVariablesUI()
+    end
+end
+
 BDT.Utils.EnableDebugVariable = function(varName)
     if _G[varName] == nil then
         print("BDT: '" .. varName .. "' not found")
@@ -105,6 +111,11 @@ function VariableManager:DisableDevModeVariables()
 end
 
 function VariableManager:RegisterForDevModeToggle(varName, description, category)
+    if not varName or varName == "" then
+        print("BDT: Error - No variable name provided")
+        return false
+    end
+
     varName = varName:gsub("^%s+", ""):gsub("%s+$", "")
 
     if _G[varName] == nil then
@@ -129,10 +140,12 @@ function VariableManager:RegisterForDevModeToggle(varName, description, category
     }
 
     print("BDT: Registered '" .. varName .. "'")
-    
-    if BDT.DevMode and BDT.DevMode.settingsFrame and BDT.DevMode.settingsFrame:IsShown() then
-        BDT.DevMode:UpdateVariablesUI()
+
+    if BDT.DevMode and BDT.DevMode:IsEnabled() then
+        BDT.Utils.EnableDebugVariable(varName)
     end
+
+    RefreshDevModeUI()
     
     return true
 end
@@ -141,16 +154,30 @@ function VariableManager:UnregisterForDevModeToggle(varName)
     if BDT.db.devModeToggleVariables and BDT.db.devModeToggleVariables[varName] then
         BDT.db.devModeToggleVariables[varName] = nil
         print("BDT: Unregistered '" .. varName .. "'")
-        
-        if BDT.DevMode and BDT.DevMode.settingsFrame and BDT.DevMode.settingsFrame:IsShown() then
-            BDT.DevMode:UpdateVariablesUI()
+
+        if BDT.DevMode and BDT.DevMode:IsEnabled() then
+            BDT.Utils.DisableDebugVariable(varName)
         end
+
+        RefreshDevModeUI()
         
         return true
     end
 
     print("BDT: '" .. varName .. "' not found in toggle list")
     return false
+end
+
+function VariableManager:IsRegisteredForDevModeToggle(varName)
+    return BDT.db and BDT.db.devModeToggleVariables and BDT.db.devModeToggleVariables[varName] ~= nil
+end
+
+function VariableManager:ToggleDevModeVariableRegistration(varName)
+    if self:IsRegisteredForDevModeToggle(varName) then
+        return self:UnregisterForDevModeToggle(varName)
+    end
+
+    return self:RegisterForDevModeToggle(varName)
 end
 
 function VariableManager:CheckVariableExistence(varName)

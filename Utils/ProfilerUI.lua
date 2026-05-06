@@ -136,36 +136,28 @@ function ProfilerUI:UpdateData()
         return
     end
 
-    UpdateAddOnCPUUsage()
-    UpdateAddOnMemoryUsage()
+    BDT.Compat.UpdateAddOnCPUUsage()
+    BDT.Compat.UpdateAddOnMemoryUsage()
 
     local addonData = {}
 
-    local numAddons = C_AddOns and C_AddOns.GetNumAddOns and C_AddOns.GetNumAddOns() or GetNumAddOns()
+    local numAddons = BDT.Compat.GetNumAddOns()
 
     for i = 1, numAddons do
-        local name, title, notes, loadable, reason, security, newVersion
-        if C_AddOns and C_AddOns.GetAddOnInfo then
-            name, title, notes, loadable, reason, security, newVersion = C_AddOns.GetAddOnInfo(i)
-        else
-            name, title, notes, loadable, reason, security, newVersion = GetAddOnInfo(i)
-        end
-
-        local loaded = false
-        if C_AddOns and C_AddOns.IsAddOnLoaded then
-            loaded = C_AddOns.IsAddOnLoaded(i)
-        else
-            loaded = IsAddOnLoaded(i)
-        end
+        local name, title = BDT.Compat.GetAddOnInfo(i)
+        local addonKey = name or i
+        local loaded = BDT.Compat.IsAddOnLoaded(addonKey)
 
         if loaded then
-            local cpuUsage = GetAddOnCPUUsage(i)
-            local memUsage = GetAddOnMemoryUsage(i)
+            local cpuUsage = BDT.Compat.GetAddOnCPUUsage(addonKey)
+            local memUsage = BDT.Compat.GetAddOnMemoryUsage(addonKey)
             table.insert(addonData, {
                 index = i,
-                name = title or name,
-                cpu = cpuUsage,
-                mem = memUsage,
+                name = title or name or ("Addon " .. i),
+                cpu = cpuUsage or 0,
+                mem = memUsage or 0,
+                cpuAvailable = cpuUsage ~= nil,
+                memAvailable = memUsage ~= nil,
             })
         end
     end
@@ -224,8 +216,10 @@ function ProfilerUI:RefreshUI(data)
         row.nameText:SetTextColor(1, 1, 1)
 
         -- Color code the CPU value
-        local cpuStr = string.format("%.2f ms", item.cpu)
-        if item.cpu > 50 then
+        local cpuStr = item.cpuAvailable and string.format("%.2f ms", item.cpu) or "n/a"
+        if not item.cpuAvailable then
+            row.cpuText:SetTextColor(0.6, 0.6, 0.6)
+        elseif item.cpu > 50 then
             row.cpuText:SetTextColor(1, 0.2, 0.2)
         elseif item.cpu > 10 then
             row.cpuText:SetTextColor(1, 0.8, 0.2)
@@ -235,8 +229,10 @@ function ProfilerUI:RefreshUI(data)
         row.cpuText:SetText(cpuStr)
 
         -- Color code the MEM value
-        local memStr = FormatMemory(item.mem)
-        if item.mem > 10240 then
+        local memStr = item.memAvailable and FormatMemory(item.mem) or "n/a"
+        if not item.memAvailable then
+            row.memText:SetTextColor(0.6, 0.6, 0.6)
+        elseif item.mem > 10240 then
             row.memText:SetTextColor(1, 0.2, 0.2)
         elseif item.mem > 1024 then
             row.memText:SetTextColor(1, 0.8, 0.2)

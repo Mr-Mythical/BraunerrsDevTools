@@ -16,12 +16,15 @@ function BDT.Utils.ToggleMouseCoords()
     if not coordsFrame then
         coordsFrame = CreateFrame("Frame", "BDT_MouseCoordsOverlay", UIParent, "BackdropTemplate")
         coordsFrame:SetSize(120, 30)
-        coordsFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 100)
+        BDT.UI.RestoreFramePosition(coordsFrame, "mouseCoordsUI")
         coordsFrame:SetMovable(true)
         coordsFrame:EnableMouse(true)
         coordsFrame:RegisterForDrag("LeftButton")
         coordsFrame:SetScript("OnDragStart", coordsFrame.StartMoving)
-        coordsFrame:SetScript("OnDragStop", coordsFrame.StopMovingOrSizing)
+        coordsFrame:SetScript("OnDragStop", function(self)
+            self:StopMovingOrSizing()
+            BDT.UI.SaveFramePosition(self, "mouseCoordsUI")
+        end)
         coordsFrame:SetFrameStrata("TOOLTIP")
         
         -- Try to use typical backdrop

@@ -16,17 +16,38 @@ BDT.Utils.IsDebugVariableEnabled = function(varName)
     return _G[varName] == true
 end
 
-local defaults = BDT.Options.defaults
+local defaults = BDT.Config.defaults
 
 local eventFrame = CreateFrame("Frame")
 
-local function InitializeSettings()
-    BraunerrsDevToolsDB = BraunerrsDevToolsDB or {}
-    for k, v in pairs(defaults) do
-        if BraunerrsDevToolsDB[k] == nil then
-            BraunerrsDevToolsDB[k] = v
+local function CopyDefaultValue(value)
+    if type(value) ~= "table" then
+        return value
+    end
+
+    local copy = {}
+    for k, v in pairs(value) do
+        copy[k] = CopyDefaultValue(v)
+    end
+    return copy
+end
+
+local function ApplyDefaults(db, defaultValues)
+    for k, v in pairs(defaultValues) do
+        if db[k] == nil then
+            db[k] = CopyDefaultValue(v)
         end
     end
+end
+
+local function InitializeSettings()
+    BraunerrsDevToolsDB = BraunerrsDevToolsDB or {}
+
+    if BDT.Config and BDT.Config.MigrateDB then
+        BDT.Config.MigrateDB(BraunerrsDevToolsDB)
+    end
+
+    ApplyDefaults(BraunerrsDevToolsDB, defaults)
     BDT.db = BraunerrsDevToolsDB
 end
 
@@ -56,13 +77,17 @@ local function Initialize()
 end
 
 function BDTToggleDevMode()
-    if BDT and BDT.DevMode then
-        BDT.DevMode:Toggle()
+    if BDT and BDT.Actions then
+        BDT.Actions.ToggleDevMode()
     end
 end
 
 function BDTReloadUI()
-    ReloadUI()
+    if BDT and BDT.Actions then
+        BDT.Actions.ReloadUI()
+    else
+        ReloadUI()
+    end
 end
 
 eventFrame:RegisterEvent("PLAYER_LOGIN")
@@ -76,13 +101,7 @@ end)
 SLASH_BDT_CHATCLEAR1 = "/cc"
 SLASH_BDT_CHATCLEAR2 = "/clearchat"
 SlashCmdList["BDT_CHATCLEAR"] = function(msg)
-    for i = 1, NUM_CHAT_WINDOWS or 10 do
-        local frame = _G["ChatFrame" .. i]
-        if frame then
-            frame:Clear()
-        end
-    end
-    print("BDT: Chat cleared.")
+    BDT.Actions.ClearChat()
 end
 
 SLASH_BRAUNERRSDEVTOOLS1 = "/bdt"
@@ -91,50 +110,45 @@ SLASH_BRAUNERRSDEVTOOLS2 = "/braunerrsdev"
 local function ShowHelp()
     print("BDT Commands:")
     print("  /bdt - Toggle dev mode")
+    print("  /bdt quick - Toggle Quick Actions")
     print("  /bdt coords - Toggle mouse coordinates overlay")
     print("  /bdt grid [size|off] - Toggle/resize screen alignment grid (default 64, e.g. 32/64)")
     print("  /bdt profile - Toggle script profiling and reload")
     print("  /bdt profiler - Toggle Addon CPU Profiler UI")
     print("  /cc or /clearchat - Clear all chat windows")
     print("  /bdt debug - Open debug UI directly")
+    print("  /bdt check <variable> - Inspect a global debug variable")
+    print("  /bdt resetui - Reset BDT window positions")
     print("  /bdt help - Show this help")
 end
 
 SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
-    msg = msg:lower():gsub("^%s+", ""):gsub("%s+$", "")
+    local rawMsg = msg or ""
+    local command, arg = rawMsg:match("^(%S*)%s*(.-)%s*$")
+    command = (command or ""):lower()
+    arg = arg or ""
     
-    if msg == "devmode" or msg == "dev" or msg == "" then
-        BDT.DevMode:Toggle()
-    elseif msg == "debug" or msg == "ui" then
-        if DevTools and DevTools.DebugUI then
-            DevTools.DebugUI:Show()
-        else
-            print("BDT: Debug UI not available")
+    if command == "devmode" or command == "dev" or command == "" then
+        BDT.Actions.ToggleDevMode()
+    elseif command == "debug" or command == "ui" then
+        BDT.Actions.OpenDebugUI()
+    elseif command == "quick" then
+        BDT.Actions.ToggleQuickActions()
+    elseif command == "profile" then
+        BDT.Actions.ToggleProfileAndReload()
+    elseif command == "coords" then
+        BDT.Actions.ToggleMouseCoords()
+    elseif command == "grid" then
+        BDT.Actions.ToggleGrid(arg ~= "" and arg or nil)
+    elseif command == "profiler" or command == "profilerui" then
+        BDT.Actions.ToggleProfilerUI()
+    elseif command == "check" then
+        if BDT.VariableManager then
+            BDT.VariableManager:CheckVariableExistence(arg)
         end
-    elseif msg == "profile" then
-        local currentState = GetCVarBool("scriptProfile")
-        SetCVar("scriptProfile", currentState and "0" or "1")
-        print("BDT: Script Profiling " .. (currentState and "disabled" or "enabled") .. ". Reloading UI...")
-        ReloadUI()
-    elseif msg == "coords" then
-        if BDT.Utils and BDT.Utils.ToggleMouseCoords then
-            BDT.Utils.ToggleMouseCoords()
-        end
-    elseif msg:match("^grid") then
-        local cmd, arg = msg:match("^(%S*)%s*(.*)$")
-        arg = (arg ~= "") and arg or nil
-        if BDT.Utils and BDT.Utils.ToggleGrid then
-            BDT.Utils.ToggleGrid(arg)
-        end
-    elseif msg == "profiler" or msg == "profilerui" then
-        if BDT.ProfilerUI then
-            if BDT.ProfilerUI.frame and BDT.ProfilerUI.frame:IsShown() then
-                BDT.ProfilerUI:Hide()
-            else
-                BDT.ProfilerUI:Show()
-            end
-        end
-    elseif msg == "help" then
+    elseif command == "resetui" then
+        BDT.Actions.ResetUIPositions()
+    elseif command == "help" then
         ShowHelp()
     else
         print("BDT: Unknown command. Showing help...")

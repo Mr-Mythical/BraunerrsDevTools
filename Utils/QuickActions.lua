@@ -15,26 +15,7 @@ function QuickActions:CreateUI()
     
     local frame = CreateFrame("Frame", "BDTQuickActionsFrame", UIParent, "BackdropTemplate")
     frame:SetSize(220, 375)
-
-    -- Load saved position or use default
-    if BDT.db and BDT.db.quickActionsUI and BDT.db.quickActionsUI.point then
-        local saved = BDT.db.quickActionsUI.point
-        local point, parent, relativePoint, xOfs, yOfs
-        if #saved == 5 then
-            point, parent, relativePoint, xOfs, yOfs = unpack(saved)
-        elseif #saved == 4 then
-            point, relativePoint, xOfs, yOfs = unpack(saved)
-            parent = "UIParent"
-        end
-        if point and parent and relativePoint and type(xOfs) == "number" and type(yOfs) == "number" then
-            local parentFrame = _G[parent] or UIParent
-            frame:SetPoint(point, parentFrame, relativePoint, xOfs, yOfs)
-        else
-            frame:SetPoint("CENTER", UIParent, "CENTER", 350, 0)
-        end
-    else
-        frame:SetPoint("CENTER", UIParent, "CENTER", 350, 0)
-    end
+    BDT.UI.RestoreFramePosition(frame, "quickActionsUI")
     
     frame:SetFrameStrata("DIALOG")
     frame:SetFrameLevel(200)
@@ -73,10 +54,7 @@ function QuickActions:CreateUI()
     profileBtn:SetPoint("TOP", profileText, "BOTTOM", 0, -5)
     profileBtn:SetText("Toggle Profiling & Reload")
     profileBtn:SetScript("OnClick", function()
-        local currentState = GetCVarBool("scriptProfile")
-        SetCVar("scriptProfile", currentState and "0" or "1")
-        print("BDT: Script Profiling " .. (currentState and "disabled" or "enabled") .. ". Reloading UI...")
-        ReloadUI()
+        BDT.Actions.ToggleProfileAndReload()
     end)
 
     local profilerUIBtn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -84,13 +62,7 @@ function QuickActions:CreateUI()
     profilerUIBtn:SetPoint("TOP", profileBtn, "BOTTOM", 0, -5)
     profilerUIBtn:SetText("Open Profiler UI")
     profilerUIBtn:SetScript("OnClick", function()
-        if BDT.ProfilerUI then
-            if BDT.ProfilerUI.frame and BDT.ProfilerUI.frame:IsShown() then
-                BDT.ProfilerUI:Hide()
-            else
-                BDT.ProfilerUI:Show()
-            end
-        end
+        BDT.Actions.ToggleProfilerUI()
     end)
     self.profilerUIBtn = profilerUIBtn
 
@@ -99,12 +71,7 @@ function QuickActions:CreateUI()
     fstackBtn:SetPoint("TOP", profilerUIBtn, "BOTTOM", 0, -10)
     fstackBtn:SetText("/fstack")
     fstackBtn:SetScript("OnClick", function()
-        UIParentLoadAddOn("Blizzard_DebugTools")
-        if SlashCmdList.FRAMESTACK then
-            SlashCmdList.FRAMESTACK("")
-        else
-            FrameStackTooltip_Toggle()
-        end
+        BDT.Actions.ToggleFrameStack()
     end)
     
     local etraceBtn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -112,14 +79,7 @@ function QuickActions:CreateUI()
     etraceBtn:SetPoint("TOP", fstackBtn, "BOTTOM", 0, -5)
     etraceBtn:SetText("/etrace")
     etraceBtn:SetScript("OnClick", function()
-        UIParentLoadAddOn("Blizzard_DebugTools")
-        if SlashCmdList.EVENTTRACE then
-            SlashCmdList.EVENTTRACE("")
-        elseif EventTrace and EventTrace.ToggleVisibility then
-            EventTrace:ToggleVisibility()
-        else
-            print("BDT: ETrace not available")
-        end
+        BDT.Actions.ToggleEventTrace()
     end)
 
     local gridBtn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -127,10 +87,8 @@ function QuickActions:CreateUI()
     gridBtn:SetPoint("TOP", etraceBtn, "BOTTOM", 0, -10)
     gridBtn:SetText("Toggle Grid")
     gridBtn:SetScript("OnClick", function()
-        if BDT.Utils and BDT.Utils.ToggleGrid then
-            BDT.Utils.ToggleGrid(nil)
-            QuickActions:UpdateGridStatus()
-        end
+        BDT.Actions.ToggleGrid(nil)
+        QuickActions:UpdateGridStatus()
     end)
 
     local gridInfo = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -143,10 +101,8 @@ function QuickActions:CreateUI()
     grid32Btn:SetPoint("TOP", gridInfo, "BOTTOM", 0, -8)
     grid32Btn:SetText("Grid 32")
     grid32Btn:SetScript("OnClick", function()
-        if BDT.Utils and BDT.Utils.ToggleGrid then
-            BDT.Utils.ToggleGrid(32)
-            QuickActions:UpdateGridStatus()
-        end
+        BDT.Actions.ToggleGrid(32)
+        QuickActions:UpdateGridStatus()
     end)
 
     local grid64Btn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -154,10 +110,8 @@ function QuickActions:CreateUI()
     grid64Btn:SetPoint("TOP", grid32Btn, "BOTTOM", 0, -5)
     grid64Btn:SetText("Grid 64")
     grid64Btn:SetScript("OnClick", function()
-        if BDT.Utils and BDT.Utils.ToggleGrid then
-            BDT.Utils.ToggleGrid(64)
-            QuickActions:UpdateGridStatus()
-        end
+        BDT.Actions.ToggleGrid(64)
+        QuickActions:UpdateGridStatus()
     end)
 
     local ccBtn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -165,9 +119,7 @@ function QuickActions:CreateUI()
     ccBtn:SetPoint("TOP", grid64Btn, "BOTTOM", 0, -10)
     ccBtn:SetText("Clear Chat")
     ccBtn:SetScript("OnClick", function()
-        if SlashCmdList["BDT_CHATCLEAR"] then
-            SlashCmdList["BDT_CHATCLEAR"]("")
-        end
+        BDT.Actions.ClearChat()
     end)
 
     local mouseCoordsBtn = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -175,9 +127,7 @@ function QuickActions:CreateUI()
     mouseCoordsBtn:SetPoint("TOP", ccBtn, "BOTTOM", 0, -5)
     mouseCoordsBtn:SetText("Toggle Mouse Coords")
     mouseCoordsBtn:SetScript("OnClick", function()
-        if BDT.Utils and BDT.Utils.ToggleMouseCoords then
-            BDT.Utils.ToggleMouseCoords()
-        end
+        BDT.Actions.ToggleMouseCoords()
     end)
 
     self.frame = frame
@@ -185,14 +135,8 @@ end
 
 function QuickActions:SaveUIPosition()
     if not self.frame then return end
-    
-    if not BDT.db.quickActionsUI then
-        BDT.db.quickActionsUI = {}
-    end
-    
-    local point, relativeTo, relativePoint, xOfs, yOfs = self.frame:GetPoint()
-    local parentName = "UIParent"
-    BDT.db.quickActionsUI.point = {point, parentName, relativePoint, xOfs, yOfs}
+
+    BDT.UI.SaveFramePosition(self.frame, "quickActionsUI")
 end
 
 function QuickActions:UpdateProfileText()

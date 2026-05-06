@@ -9,6 +9,9 @@
 ## SavedVariables: BraunerrsDevToolsDB
 
 Data\Config.lua
+Utils\Compat.lua
+Utils\UI.lua
+Utils\Actions.lua
 Options.lua
 Core.lua
 Utils\DevMode.lua

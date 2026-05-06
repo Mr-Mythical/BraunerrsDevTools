@@ -10,31 +10,13 @@ local _, BDT = ...
 local BDTOptions = {}
 BDT.Options = BDTOptions
 
--- Configuration data
-local DEFAULTS = {
-    devMode = false,
-    enableBugSackIntegration = true,
-    enableReloadUIKeybind = true,
-    enableAutoAFK = true,
-    hasLoaded = false,
-    bugSackOriginalAutoPopup = nil,
-    devModeToggleVariables = {},
-    reloadUIR = false,
-    reloadUICTRL = true,
-    reloadUISHIFT = false,
-    reloadUIALT = false,
-    reloadUIOnDevModeToggle = false,
-    disableReloadWhileTyping = true,
-    hideInterfaceVersionInDevMode = false,
-    gridEnabled = false,
-    gridSize = 64,
-    mouseCoordsEnabled = false,
-}
+local DEFAULTS = BDT.Config.defaults
 
 -- Keep backwards compatibility
 BDTOptions.defaults = DEFAULTS
 
 local TOOLTIPS = {
+    enableReloadUIKeybind = "Enable all BDT reload UI keybinds while development mode is active.",
     reloadUIR = "Enable reloading the UI with R in dev mode.",
     reloadUICTRL = "Enable reloading the UI with Ctrl+R in dev mode.",
     reloadUISHIFT = "Enable reloading the UI with Shift+R in dev mode.",
@@ -57,7 +39,7 @@ local function createSetting(category, name, key, tooltip)
     local option = Settings.RegisterAddOnSetting(category, name, key, BraunerrsDevToolsDB, "boolean", name, defaultValue)
     option:SetValueChangedCallback(function(_, value)
         BraunerrsDevToolsDB[key] = value
-        if key:find("reloadUI") then
+        if key == "enableReloadUIKeybind" or key == "disableReloadWhileTyping" or key:find("reloadUI") then
             BDTOptions.updateReloadUIOptions()
         else
             BDTOptions.updateDevMode()
@@ -101,6 +83,7 @@ function BDTOptions:Initialize()
         
         -- Define all settings in a table-driven way
         local settingsConfig = {
+            { name = "Enable Reload UI Keybinds", key = "enableReloadUIKeybind" },
             { name = "Enable Reload UI with R", key = "reloadUIR" },
             { name = "Enable Reload UI with Ctrl+R", key = "reloadUICTRL" },
             { name = "Enable Reload UI with Shift+R", key = "reloadUISHIFT" },
@@ -120,4 +103,8 @@ function BDTOptions:Initialize()
         
         BDTOptions.updateReloadUIOptions()
     end)
+
+    if not success then
+        print("BDT: Options setup failed: " .. tostring(result))
+    end
 end

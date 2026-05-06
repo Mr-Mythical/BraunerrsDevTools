@@ -6,6 +6,8 @@ Dependencies: BDT.db, BDT.DevMode
 Author: braunerr
 --]]
 
+local _, BDT = ...
+
 local DebugUI = {}
 local frame, searchBox, scrollFrame, content
 
@@ -100,8 +102,7 @@ function DebugUI:UpdateList()
                 
                 local status = v and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"
                 local displayText = k .. " - " .. status
-                local BDT = _G["BraunerrsDevTools"]
-                if BDT and BDT.db and BDT.db.devModeToggleVariables and BDT.db.devModeToggleVariables[k] then
+                if BDT.VariableManager and BDT.VariableManager:IsRegisteredForDevModeToggle(k) then
                     displayText = displayText .. " [REGISTERED]"
                 end
                 
@@ -136,47 +137,13 @@ end
 
 function DebugUI:OnVariableClick(varName)
     if type(_G[varName]) ~= "boolean" then return end
-    
-    local BDT = _G["BraunerrsDevTools"]
-    if not BDT then
-        print("BDT: Error - BraunerrsDevTools global not found")
+
+    if not BDT.VariableManager then
+        print("BDT: Variable manager not available")
         return
     end
-    
-    if not BDT.db then
-        print("BDT: Error - BDT.db not found")
-        return
-    end
-    
-    if not BDT.db.devModeToggleVariables then
-        BDT.db.devModeToggleVariables = {}
-    end
-    
-    if BDT.db.devModeToggleVariables[varName] then
-        BDT.db.devModeToggleVariables[varName] = nil
-        print("BDT: Unregistered '" .. varName .. "' from dev mode toggle")
-        
-        if BDT.DevMode and BDT.DevMode:IsEnabled() then
-            _G[varName] = false
-            print("BDT: Set '" .. varName .. "' to false (dev mode active)")
-        end
-    else
-        BDT.db.devModeToggleVariables[varName] = {
-            description = "Dev mode toggle: " .. varName,
-            category = "Dev Mode Toggle",
-            registeredAt = time()
-        }
-        print("BDT: Registered '" .. varName .. "' for dev mode toggle")
-        
-        if BDT.DevMode and BDT.DevMode:IsEnabled() then
-            _G[varName] = true
-            print("BDT: Set '" .. varName .. "' to true (dev mode active)")
-        end
-    end
-    
-    if BDT.DevMode and BDT.DevMode.UpdateVariablesUI then
-        BDT.DevMode:UpdateVariablesUI()
-    end
+
+    BDT.VariableManager:ToggleDevModeVariableRegistration(varName)
     
     self:UpdateList()
 end
