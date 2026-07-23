@@ -388,4 +388,8 @@ function DevMode:ShowVariablesUI()
     if BDT.QuickActions then
         BDT.QuickActions:Show()
     end
+
+    if BDT.db.autoOpenControlCenter and BDT.Actions then
+        BDT.Actions.OpenControlCenter()
+    end
 end

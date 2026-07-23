@@ -2,7 +2,7 @@
 Actions.lua - Shared actions used by slash commands and buttons
 
 Purpose: Keeps command and Quick Actions behavior in one place
-Dependencies: BDT.DevMode, BDT.Utils, BDT.ProfilerUI, BDT.UI
+Dependencies: BDT.DevMode, BDT.Utils, BDT.ProfilerUI, BDT.UI, BDT.ControlCenter
 Author: braunerr
 --]]
 
@@ -87,6 +87,32 @@ function Actions.ToggleQuickActions()
     end
 end
 
+function Actions.OpenControlCenter(tab)
+    if not BDT.ControlCenter then
+        print("BDT: Control Center not available")
+        return
+    end
+
+    BDT.ControlCenter:Show(tab)
+end
+
+function Actions.ToggleControlCenter(tab)
+    if not BDT.ControlCenter then
+        print("BDT: Control Center not available")
+        return
+    end
+
+    if BDT.ControlCenter:IsShown() then
+        if tab and BDT.ControlCenter:GetSelectedTab() ~= tab then
+            BDT.ControlCenter:Show(tab)
+            return
+        end
+        BDT.ControlCenter:Hide()
+    else
+        BDT.ControlCenter:Show(tab)
+    end
+end
+
 function Actions.ToggleFrameStack()
     if UIParentLoadAddOn then
         UIParentLoadAddOn("Blizzard_DebugTools")
@@ -119,4 +145,157 @@ function Actions.ResetUIPositions()
     if BDT.UI and BDT.UI.ResetManagedPositions then
         BDT.UI.ResetManagedPositions()
     end
+end
+
+-- Searchable action catalog for Control Center
+Actions.catalog = {
+    {
+        id = "toggleDevMode",
+        label = "Toggle Dev Mode",
+        keywords = "dev mode development",
+        run = function()
+            Actions.ToggleDevMode()
+        end,
+    },
+    {
+        id = "openControlCenter",
+        label = "Open Control Center",
+        keywords = "panel open main",
+        run = function()
+            Actions.OpenControlCenter()
+        end,
+    },
+    {
+        id = "toggleQuickActions",
+        label = "Toggle Quick Actions",
+        keywords = "quick actions palette",
+        run = function()
+            Actions.ToggleQuickActions()
+        end,
+    },
+    {
+        id = "openDebugUI",
+        label = "Open Debug Variables",
+        keywords = "debug variables boolean register",
+        run = function()
+            Actions.OpenDebugUI()
+        end,
+    },
+    {
+        id = "toggleProfiler",
+        label = "Toggle Profiler UI",
+        keywords = "profiler cpu memory performance",
+        run = function()
+            Actions.ToggleProfilerUI()
+        end,
+    },
+    {
+        id = "toggleProfile",
+        label = "Toggle Script Profiling & Reload",
+        keywords = "scriptprofile profile cvar reload",
+        run = function()
+            Actions.ToggleProfileAndReload()
+        end,
+    },
+    {
+        id = "toggleGrid",
+        label = "Toggle Grid",
+        keywords = "grid layout alignment",
+        run = function()
+            Actions.ToggleGrid(nil)
+        end,
+    },
+    {
+        id = "grid32",
+        label = "Grid 32",
+        keywords = "grid layout 32",
+        run = function()
+            Actions.ToggleGrid(32)
+        end,
+    },
+    {
+        id = "grid64",
+        label = "Grid 64",
+        keywords = "grid layout 64",
+        run = function()
+            Actions.ToggleGrid(64)
+        end,
+    },
+    {
+        id = "toggleCoords",
+        label = "Toggle Mouse Coordinates",
+        keywords = "mouse coords coordinates cursor layout",
+        run = function()
+            Actions.ToggleMouseCoords()
+        end,
+    },
+    {
+        id = "clearChat",
+        label = "Clear Chat",
+        keywords = "chat clear cc",
+        run = function()
+            Actions.ClearChat()
+        end,
+    },
+    {
+        id = "frameStack",
+        label = "Toggle Frame Stack (/fstack)",
+        keywords = "fstack frame stack blizzard",
+        run = function()
+            Actions.ToggleFrameStack()
+        end,
+    },
+    {
+        id = "eventTrace",
+        label = "Toggle Event Trace (/etrace)",
+        keywords = "etrace event trace blizzard",
+        run = function()
+            Actions.ToggleEventTrace()
+        end,
+    },
+    {
+        id = "resetUI",
+        label = "Reset Panel Positions",
+        keywords = "resetui positions panels windows",
+        run = function()
+            Actions.ResetUIPositions()
+        end,
+    },
+    {
+        id = "reloadUI",
+        label = "Reload UI",
+        keywords = "reload ui /reload",
+        run = function()
+            Actions.ReloadUI()
+        end,
+    },
+}
+
+function Actions.Search(query)
+    local results = {}
+    local needle = (query or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
+
+    for _, action in ipairs(Actions.catalog) do
+        if needle == "" then
+            results[#results + 1] = action
+        else
+            local haystack = (action.label .. " " .. (action.keywords or "") .. " " .. action.id):lower()
+            if haystack:find(needle, 1, true) then
+                results[#results + 1] = action
+            end
+        end
+    end
+
+    return results
+end
+
+function Actions.RunById(actionId)
+    for _, action in ipairs(Actions.catalog) do
+        if action.id == actionId then
+            action.run()
+            return true
+        end
+    end
+
+    return false
 end

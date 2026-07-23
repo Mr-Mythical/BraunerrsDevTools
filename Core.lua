@@ -69,7 +69,7 @@ local function Initialize()
     end
 
     if not BDT.db.hasLoaded then
-        print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt help for commands.")
+        print("BDT: Loaded! Use /bdt to toggle dev mode, /bdt open for Control Center, /bdt help for commands.")
         BDT.db.hasLoaded = true
     end
     DevTools = DevTools or {}
@@ -110,6 +110,7 @@ SLASH_BRAUNERRSDEVTOOLS2 = "/braunerrsdev"
 local function ShowHelp()
     print("BDT Commands:")
     print("  /bdt - Toggle dev mode")
+    print("  /bdt open [tab] - Open Control Center (quick/vars/profiler/layout/events/cvars/diag)")
     print("  /bdt quick - Toggle Quick Actions")
     print("  /bdt coords - Toggle mouse coordinates overlay")
     print("  /bdt grid [size|off] - Toggle/resize screen alignment grid (default 64, e.g. 32/64)")
@@ -130,6 +131,8 @@ SlashCmdList["BRAUNERRSDEVTOOLS"] = function(msg)
     
     if command == "devmode" or command == "dev" or command == "" then
         BDT.Actions.ToggleDevMode()
+    elseif command == "open" or command == "center" then
+        BDT.Actions.OpenControlCenter(arg ~= "" and arg or nil)
     elseif command == "debug" or command == "ui" then
         BDT.Actions.OpenDebugUI()
     elseif command == "quick" then

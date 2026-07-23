@@ -30,24 +30,32 @@ Config.defaults = {
 	reloadUIOnDevModeToggle = false,
 	disableReloadWhileTyping = true,
 	hideInterfaceVersionInDevMode = false,
+	autoOpenControlCenter = false,
 	gridEnabled = false,
 	gridSize = 64,
 	mouseCoordsEnabled = false,
 	quickActionsUI = {},
 	variablesUI = {},
 	mouseCoordsUI = {},
+	controlCenterUI = {
+		locked = false,
+		opacity = 1,
+		selectedTab = "quickActions",
+	},
 }
 
 Config.defaultFramePositions = {
 	quickActionsUI = { "CENTER", "UIParent", "CENTER", 350, 0 },
 	variablesUI = { "CENTER", "UIParent", "CENTER", 0, 0 },
 	mouseCoordsUI = { "BOTTOM", "UIParent", "BOTTOM", 0, 100 },
+	controlCenterUI = { "CENTER", "UIParent", "CENTER", 0, 40 },
 }
 
 Config.managedFrames = {
 	{ key = "quickActionsUI", frameName = "BDTQuickActionsFrame", defaultPoint = Config.defaultFramePositions.quickActionsUI },
 	{ key = "variablesUI", frameName = "BDTSettingsFrame", defaultPoint = Config.defaultFramePositions.variablesUI },
 	{ key = "mouseCoordsUI", frameName = "BDT_MouseCoordsOverlay", defaultPoint = Config.defaultFramePositions.mouseCoordsUI },
+	{ key = "controlCenterUI", frameName = "BDTControlCenterFrame", defaultPoint = Config.defaultFramePositions.controlCenterUI },
 }
 
 local function MigrateReloadTypingBehavior(db)

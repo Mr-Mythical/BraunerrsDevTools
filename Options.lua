@@ -25,7 +25,8 @@ local TOOLTIPS = {
     enableAutoAFK = "Automatically set AFK status when entering development mode.",
     reloadUIOnDevModeToggle = "Automatically reload the UI when development mode is toggled on or off.",
     disableReloadWhileTyping = "If enabled, all reload keybinds are ignored while typing in chat or edit boxes like in the WeakAuras addon.",
-    hideInterfaceVersionInDevMode = "If enabled, the interface version will not be displayed in the dev mode status indicator."
+    hideInterfaceVersionInDevMode = "If enabled, the interface version will not be displayed in the dev mode status indicator.",
+    autoOpenControlCenter = "Automatically open the Control Center panel when Dev Mode is enabled."
 }
 
 --- Creates a setting with checkbox
@@ -92,7 +93,8 @@ function BDTOptions:Initialize()
             { name = "Auto AFK in Dev Mode", key = "enableAutoAFK" },
             { name = "Reload UI on Dev Mode Toggle", key = "reloadUIOnDevModeToggle" },
             { name = "Disable reload keybinds while typing", key = "disableReloadWhileTyping" },
-            { name = "Hide Interface Version in Dev Mode", key = "hideInterfaceVersionInDevMode" }
+            { name = "Hide Interface Version in Dev Mode", key = "hideInterfaceVersionInDevMode" },
+            { name = "Auto-open Control Center in Dev Mode", key = "autoOpenControlCenter" }
         }
         
         -- Create all settings

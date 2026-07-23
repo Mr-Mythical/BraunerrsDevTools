@@ -90,6 +90,20 @@ function UI.ResetManagedPositions()
 
         local frame = _G[info.frameName]
         if frame then
+            if info.key == "controlCenterUI" then
+                BDT.db.controlCenterUI = {
+                    locked = false,
+                    opacity = 1,
+                    selectedTab = "quickActions",
+                }
+                frame:SetAlpha(1)
+                if BDT.ControlCenter then
+                    BDT.ControlCenter:UpdateLockButton()
+                    if BDT.ControlCenter.opacitySlider then
+                        BDT.ControlCenter.opacitySlider:SetValue(1)
+                    end
+                end
+            end
             UI.RestoreFramePosition(frame, info.key, info.defaultPoint)
         end
     end
